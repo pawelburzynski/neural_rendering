@@ -1,0 +1,122 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Task 0",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/task0/task0_list_platforms",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/task0",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+        {
+            "name": "Task 1",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/task1/task1_vector_add",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/task1",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+        {
+            "name": "Task 2",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/task2/task2_matrix_multiplication",
+            "args": ["--testSize=700"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/task2",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+        {
+            "name": "Task 3",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/task3/task3_reduction",
+            "args": ["--testSize=700000000"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/task3",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+        {
+            "name": "Task 4",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/task4/task4_gaussian_filter",
+            "args": ["${workspaceFolder}/task4/river_cam.jpg"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/task4",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+        {
+            "name": "Task 5",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/task5/task5_lf_renderer",
+            "args": ["${workspaceFolder}/task5/lf-images"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/task5",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
