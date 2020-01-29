@@ -1,12 +1,14 @@
 # ninja log v5
-1	88	1580262821	Simple_Render/moc_LFViewWindow.cpp	6aa46bb3b9be4d18
-1	95	1580262821	Simple_Render/moc_LFViewWidget.cpp	b3ce50252e978ef0
-95	2166	1580262823	Simple_Render/CMakeFiles/simple_render.dir/LFViewWindow.cpp.o	183dcc18c5007fee
-96	2624	1580262824	Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWidget.cpp.o	3d6c205be638ef30
-96	2685	1580262824	Simple_Render/CMakeFiles/simple_render.dir/LFViewWidget.cpp.o	db1b1a695170680e
-97	2710	1580262824	Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWindow.cpp.o	d2456cbecbd33d15
-95	2723	1580262824	Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o	6772b61be039e8fc
-0	6517	1580262828	Check/CMakeFiles/list_platforms.dir/list_platforms.cpp.o	d391e50e88c54b94
-6517	6744	1580262828	Check/list_platforms	f4c14b9350615579
-96	9190	1580262830	Simple_Render/CMakeFiles/simple_render.dir/LightFieldRenderer.cpp.o	f168f39a76b745f0
-9190	9695	1580262831	Simple_Render/simple_render	d3ca770dbfe8e13f
+0	88	1580336954	Simple_Render/moc_ViewWindow.cpp	17d756a68572f631
+0	134	1580336954	Simple_Render/moc_LFViewWidget.cpp	b3ce50252e978ef0
+134	2817	1580336957	Simple_Render/CMakeFiles/simple_render.dir/ViewWindow.cpp.o	2da54adafa99a8fd
+135	2881	1580336957	Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWidget.cpp.o	3d6c205be638ef30
+134	2904	1580336957	Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o	6772b61be039e8fc
+135	2996	1580336957	Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWindow.cpp.o	db9bca56b3bf9d12
+134	3033	1580336957	Simple_Render/CMakeFiles/simple_render.dir/LFViewWidget.cpp.o	db1b1a695170680e
+0	6468	1580336961	Check/CMakeFiles/list_platforms.dir/list_platforms.cpp.o	d391e50e88c54b94
+6468	6693	1580336961	Check/list_platforms	f4c14b9350615579
+135	9930	1580336964	Simple_Render/CMakeFiles/simple_render.dir/SimpleRenderer.cpp.o	fa3f153031dd7f73
+9931	10450	1580336965	Simple_Render/simple_render	2820f6083d818a77
+2	1594	1580337068	Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o	6772b61be039e8fc
+1594	2121	1580337068	Simple_Render/simple_render	2820f6083d818a77

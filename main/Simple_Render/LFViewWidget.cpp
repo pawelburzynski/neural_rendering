@@ -1,5 +1,5 @@
 #include "LFViewWidget.h"
-#include "LightFieldRenderer.h"
+#include "SimpleRenderer.h"
 #include <algorithm>
 
 #include <QPainter>
@@ -13,7 +13,7 @@
 #define LF_max_fov 180.f
 
 
-LFViewWidget::LFViewWidget(LightFieldRenderer *renderer, QWidget *parent)
+LFViewWidget::LFViewWidget(SimpleRenderer *renderer, QWidget *parent)
     : QOpenGLWidget(parent), lfRenderer(renderer)
 {
     elapsed = 0;

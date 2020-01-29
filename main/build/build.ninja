@@ -128,7 +128,7 @@ build Simple_Render/rebuild_cache: phony Simple_Render/CMakeFiles/rebuild_cache.
 #############################################
 # Order-only phony target for simple_render
 
-build cmake_object_order_depends_target_simple_render: phony || Simple_Render/moc_LFViewWidget.cpp Simple_Render/moc_LFViewWindow.cpp
+build cmake_object_order_depends_target_simple_render: phony || Simple_Render/moc_LFViewWidget.cpp Simple_Render/moc_ViewWindow.cpp
 build Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o: CXX_COMPILER__simple_render ../Simple_Render/main.cpp || cmake_object_order_depends_target_simple_render
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
   DEP_FILE = Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o.d
@@ -138,9 +138,9 @@ build Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o: CXX_COMPILER__simpl
   OBJECT_FILE_DIR = Simple_Render/CMakeFiles/simple_render.dir
   TARGET_COMPILE_PDB = Simple_Render/CMakeFiles/simple_render.dir/
   TARGET_PDB = Simple_Render/simple_render.pdb
-build Simple_Render/CMakeFiles/simple_render.dir/LFViewWindow.cpp.o: CXX_COMPILER__simple_render ../Simple_Render/LFViewWindow.cpp || cmake_object_order_depends_target_simple_render
+build Simple_Render/CMakeFiles/simple_render.dir/ViewWindow.cpp.o: CXX_COMPILER__simple_render ../Simple_Render/ViewWindow.cpp || cmake_object_order_depends_target_simple_render
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = Simple_Render/CMakeFiles/simple_render.dir/LFViewWindow.cpp.o.d
+  DEP_FILE = Simple_Render/CMakeFiles/simple_render.dir/ViewWindow.cpp.o.d
   FLAGS = -g   -fPIC -std=gnu++11
   INCLUDES = -I../../include -I../include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
   OBJECT_DIR = Simple_Render/CMakeFiles/simple_render.dir
@@ -156,9 +156,9 @@ build Simple_Render/CMakeFiles/simple_render.dir/LFViewWidget.cpp.o: CXX_COMPILE
   OBJECT_FILE_DIR = Simple_Render/CMakeFiles/simple_render.dir
   TARGET_COMPILE_PDB = Simple_Render/CMakeFiles/simple_render.dir/
   TARGET_PDB = Simple_Render/simple_render.pdb
-build Simple_Render/CMakeFiles/simple_render.dir/LightFieldRenderer.cpp.o: CXX_COMPILER__simple_render ../Simple_Render/LightFieldRenderer.cpp || cmake_object_order_depends_target_simple_render
+build Simple_Render/CMakeFiles/simple_render.dir/SimpleRenderer.cpp.o: CXX_COMPILER__simple_render ../Simple_Render/SimpleRenderer.cpp || cmake_object_order_depends_target_simple_render
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = Simple_Render/CMakeFiles/simple_render.dir/LightFieldRenderer.cpp.o.d
+  DEP_FILE = Simple_Render/CMakeFiles/simple_render.dir/SimpleRenderer.cpp.o.d
   FLAGS = -g   -fPIC -std=gnu++11
   INCLUDES = -I../../include -I../include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
   OBJECT_DIR = Simple_Render/CMakeFiles/simple_render.dir
@@ -174,9 +174,9 @@ build Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWidget.cpp.o: CXX_COM
   OBJECT_FILE_DIR = Simple_Render/CMakeFiles/simple_render.dir
   TARGET_COMPILE_PDB = Simple_Render/CMakeFiles/simple_render.dir/
   TARGET_PDB = Simple_Render/simple_render.pdb
-build Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWindow.cpp.o: CXX_COMPILER__simple_render Simple_Render/moc_LFViewWindow.cpp || cmake_object_order_depends_target_simple_render
+build Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWindow.cpp.o: CXX_COMPILER__simple_render Simple_Render/moc_ViewWindow.cpp || cmake_object_order_depends_target_simple_render
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWindow.cpp.o.d
+  DEP_FILE = Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWindow.cpp.o.d
   FLAGS = -g   -fPIC -std=gnu++11
   INCLUDES = -I../../include -I../include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
   OBJECT_DIR = Simple_Render/CMakeFiles/simple_render.dir
@@ -191,7 +191,7 @@ build Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWindow.cpp.o: CXX_COM
 #############################################
 # Link the executable Simple_Render/simple_render
 
-build Simple_Render/simple_render: CXX_EXECUTABLE_LINKER__simple_render Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o Simple_Render/CMakeFiles/simple_render.dir/LFViewWindow.cpp.o Simple_Render/CMakeFiles/simple_render.dir/LFViewWidget.cpp.o Simple_Render/CMakeFiles/simple_render.dir/LightFieldRenderer.cpp.o Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWidget.cpp.o Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWindow.cpp.o | /usr/lib/x86_64-linux-gnu/libOpenCL.so /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.9.5 /usr/lib/x86_64-linux-gnu/libQt5Gui.so.5.9.5 /usr/lib/x86_64-linux-gnu/libQt5Core.so.5.9.5
+build Simple_Render/simple_render: CXX_EXECUTABLE_LINKER__simple_render Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o Simple_Render/CMakeFiles/simple_render.dir/ViewWindow.cpp.o Simple_Render/CMakeFiles/simple_render.dir/LFViewWidget.cpp.o Simple_Render/CMakeFiles/simple_render.dir/SimpleRenderer.cpp.o Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWidget.cpp.o Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWindow.cpp.o | /usr/lib/x86_64-linux-gnu/libOpenCL.so /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.9.5 /usr/lib/x86_64-linux-gnu/libQt5Gui.so.5.9.5 /usr/lib/x86_64-linux-gnu/libQt5Core.so.5.9.5
   FLAGS = -g
   LINK_FLAGS = -rdynamic
   LINK_LIBRARIES = -lOpenCL /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.9.5 /usr/lib/x86_64-linux-gnu/libQt5Gui.so.5.9.5 /usr/lib/x86_64-linux-gnu/libQt5Core.so.5.9.5
@@ -220,11 +220,11 @@ build Simple_Render/moc_LFViewWidget.cpp: CUSTOM_COMMAND ../Simple_Render/LFView
   restat = 1
 
 #############################################
-# Custom command for Simple_Render/moc_LFViewWindow.cpp
+# Custom command for Simple_Render/moc_ViewWindow.cpp
 
-build Simple_Render/moc_LFViewWindow.cpp: CUSTOM_COMMAND ../Simple_Render/LFViewWindow.h
-  COMMAND = cd "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render" && /usr/lib/qt5/bin/moc "@/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_LFViewWindow.cpp_parameters"
-  DESC = Generating moc_LFViewWindow.cpp
+build Simple_Render/moc_ViewWindow.cpp: CUSTOM_COMMAND ../Simple_Render/ViewWindow.h
+  COMMAND = cd "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render" && /usr/lib/qt5/bin/moc "@/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWindow.cpp_parameters"
+  DESC = Generating moc_ViewWindow.cpp
   restat = 1
 # =============================================================================
 # Target aliases.

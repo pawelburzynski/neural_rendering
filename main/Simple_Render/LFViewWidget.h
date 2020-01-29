@@ -3,7 +3,7 @@
 
 #include <QOpenGLWidget>
 #include <QKeyEvent>
-#include "LightFieldRenderer.h"
+#include "SimpleRenderer.h"
 #include <QLabel>
 
 class LFViewWidget : public QOpenGLWidget
@@ -11,7 +11,7 @@ class LFViewWidget : public QOpenGLWidget
     Q_OBJECT
 
 public:
-    LFViewWidget(LightFieldRenderer *lfRenderer, QWidget *parent);
+    LFViewWidget(SimpleRenderer *lfRenderer, QWidget *parent);
 	QVector3D getKpos();
 	float getFocal();
 	float getAperture();
@@ -46,7 +46,7 @@ protected:
 	QSize sizeHint() const override;
 
 private:
-    LightFieldRenderer *lfRenderer;
+    SimpleRenderer *lfRenderer;
     int elapsed;
 	QPoint mouseDragStart;
 	QVector3D mouseDragStartK_pos;

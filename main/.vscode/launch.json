@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Check",
             "type": "cppdbg",
@@ -29,7 +30,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Simple_Render/simple_render",
-            "args": ["${workspaceFolder}/Simple_Render/lf-images"],
+            "args": ["${workspaceFolder}/Data/checkboard_plane"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/Simple_Render",
             "environment": [],

@@ -7,7 +7,7 @@
 #include <QVector3D>
 #include <QCommandLineParser>
 
-#include "LFViewWindow.h"
+#include "ViewWindow.h"
 
 void printQMat4x4(QMatrix4x4 mat) {
     mat = mat.transposed();
@@ -79,10 +79,10 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("LF Viewer");
+    parser.setApplicationDescription("Simple Gausian Interpolation Renderer");
     parser.addHelpOption();
     //parser.addVersionOption();
-    parser.addPositionalArgument("lf_dir", QString("Directory with light field images."));
+    parser.addPositionalArgument("training_dir", QString("Directory with training images."));
 
     parser.process(app);
 
@@ -91,14 +91,14 @@ int main(int argc, char *argv[])
     fmt.setSamples(4);
     QSurfaceFormat::setDefaultFormat(fmt);
 
-    QString lf_dir = "lf-images";
+    QString training_dir = "../Data/checkboard_plane";
     const QStringList args = parser.positionalArguments();
     if( args.length()>0 )
-        lf_dir=args[0];
+        training_dir=args[0];
 
-    LFViewerWindow window;
+    ViewerWindow window;
     window.show();
-    window.loadLFData(lf_dir);
+    window.loadTrainingData(training_dir);
     return app.exec();
 
 }
