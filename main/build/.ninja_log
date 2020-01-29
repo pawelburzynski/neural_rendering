@@ -1,0 +1,12 @@
+# ninja log v5
+1	88	1580262821	Simple_Render/moc_LFViewWindow.cpp	6aa46bb3b9be4d18
+1	95	1580262821	Simple_Render/moc_LFViewWidget.cpp	b3ce50252e978ef0
+95	2166	1580262823	Simple_Render/CMakeFiles/simple_render.dir/LFViewWindow.cpp.o	183dcc18c5007fee
+96	2624	1580262824	Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWidget.cpp.o	3d6c205be638ef30
+96	2685	1580262824	Simple_Render/CMakeFiles/simple_render.dir/LFViewWidget.cpp.o	db1b1a695170680e
+97	2710	1580262824	Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWindow.cpp.o	d2456cbecbd33d15
+95	2723	1580262824	Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o	6772b61be039e8fc
+0	6517	1580262828	Check/CMakeFiles/list_platforms.dir/list_platforms.cpp.o	d391e50e88c54b94
+6517	6744	1580262828	Check/list_platforms	f4c14b9350615579
+96	9190	1580262830	Simple_Render/CMakeFiles/simple_render.dir/LightFieldRenderer.cpp.o	f168f39a76b745f0
+9190	9695	1580262831	Simple_Render/simple_render	d3ca770dbfe8e13f
