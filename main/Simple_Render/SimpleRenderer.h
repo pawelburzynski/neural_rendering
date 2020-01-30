@@ -43,12 +43,11 @@ private:
     cl::Kernel kernel;
     cl::Image2D vcamImage;
 
-    // Light Field data
-    cl::Image3D lfData;
+    //  Renderer Data
+    cl::Image3D renderData;
     int imgWidth;
     int imgHeight;
-    int nrows=0;
-    int ncols=0;
+    int dataPoints = 0;
     int debug = 0;
 
     // Tranformation Matrices

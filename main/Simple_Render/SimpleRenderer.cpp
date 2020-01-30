@@ -25,14 +25,14 @@ QMatrix4x4 lookAtRH(QVector3D eye, QVector3D center, QVector3D up)
 }
 
 SimpleRenderer::SimpleRenderer() :
-	viewWidth(0), viewHeight(0), ncols(0), nrows(0)
+	viewWidth(0), viewHeight(0), dataPoints(0)
 {
     initOpenCL();
 }
 
 void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize)
 {
-    if( nrows == 0 ) // No LF data available
+    if( dataPoints == 0 ) // No data available
         return;
 
     unsigned char* data = NULL;
@@ -67,26 +67,25 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
 // Calculate View tranformation matrix for each camera and fill camera position buffer
 void SimpleRenderer::calculateArrayCameraViewTransform()
 {
-    camPosArr.resize(3*nrows*ncols);
-    // View Transformation matrices for array cameras
-    for (int row = 0; row < nrows; row++) {
-        for (int col = 0; col < ncols; col++) {
-            QMatrix4x4 vij; // View matrix for each array camera
-            QVector4D &w_cam_i = w_cam[col+row*ncols];
+    camPosArr.resize(3*dataPoints);
+    // View Transformation matrices for cameras
+    for (int i = 0; i < dataPoints; i++) {
+        QMatrix4x4 vij; // View matrix for each array camera
+        QVector4D &w_cam_i = w_cam[i];
 //			vij = lookAtRH(QVector3D(K_pos_0.x(), K_pos_0.y(), 0), QVector3D(K_pos_0.x(), K_pos_0.y(), 1), QVector3D(0, 1, 0));
-			vij = lookAtRH(QVector3D(w_cam_i.x(),w_cam_i.y(),0), QVector3D(w_cam_i.x(),w_cam_i.y(),1), QVector3D(0,1,0));
+        vij = lookAtRH(QVector3D(w_cam_i.x(),w_cam_i.y(),0), QVector3D(w_cam_i.x(),w_cam_i.y(),1), QVector3D(0,1,0));
 //			vij.translate(QVector3D(-w_cam_i.x(), -w_cam_i.y(), 0));
-            Vi.push_back(vij);
-            camPosArr[(col+row*ncols)*3+0] = (float)w_cam_i.x();
-            camPosArr[(col+row*ncols)*3+1] = (float)w_cam_i.y();
-            camPosArr[(col+row*ncols)*3+2] = 0.0f;
-        }
+        Vi.push_back(vij);
+        camPosArr[i*3+0] = (float)w_cam_i.x();
+        camPosArr[i*3+1] = (float)w_cam_i.y();
+        camPosArr[i*3+2] = 0.0f;
     }
-    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*nrows*ncols,camPosArr.data());
+    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*dataPoints,camPosArr.data());
 }
 
 void SimpleRenderer::calculateAllTransforms()
 {
+    /*
     // Intrinsic camera matrix of data camera
 	float proj_d = tan(camera_fov / 2.f * M_PI / 180.f);
 	QMatrix4x4 Kci (imgWidth/proj_d,  0.0f,           0.0f,  imgWidth/2.0f,
@@ -125,7 +124,7 @@ void SimpleRenderer::calculateAllTransforms()
 
 	QMatrix4x4 transKW = transWK.inverted();
 
-    transMatsVec.resize(16*nrows*ncols);
+    transMatsVec.resize(16*dataPoints);
     int ndx = 0;
     for (int i = 0; i < nrows; i++) {
         for (int j = 0; j < ncols; j++) {
@@ -185,127 +184,130 @@ void SimpleRenderer::calculateAllTransforms()
 	}
 
 	queue.enqueueWriteBuffer(apertureTransMats, CL_TRUE, 0, sizeof(float) * 16, apertureTrans);
+    */
+} 
 
-}
-
-// Read light field array data
+// Read training data
 void SimpleRenderer::readTrainingData(const char *training_dir)
 {
-    int rMax = 0;
-    int cMax = 0;
 
     QStringList files = QDir(training_dir).entryList();
-    printf("%s\n", training_dir);
-    printf("%d\n", files.size());
-    // Find the size of the camera array
+    QString dataFile;
+    bool foundData = false;
+
+    // Find number of training images and metadata
     for (int i = 0; i < files.size(); i++) {
         QFileInfo f(files[i]);
         if (f.suffix() == "png") {
-            int row, col;
-            double camx, camy;
-            char ext[64];
-            int ret = sscanf(files[i].toStdString().c_str(),
-                             "out_%d_%d_%lf_%lf%s", &row, &col, &camy, &camx, ext);
-            if (ret == 5) {
-                rMax = std::max(rMax, row + 1);
-                cMax = std::max(cMax, col + 1);
-            } else {
-                qCritical("ERROR: Invalid File name!");
-                std::abort();
-            }
+            dataPoints ++;
+        }
+        if (f.suffix() == "txt") {
+            dataFile =  QString(training_dir) + "/" + files[i];
+            foundData = true;
         }
     }
-    nrows = rMax;
-    ncols = cMax;
-	if (nrows < 1 || ncols < 1) {
-		qCritical("ERROR: No light field images found");
-		std::abort();
-	}
 
-    std::vector<uint8_t> imageData; 
-    std::vector<QString> valid_files;
-    w_cam.resize(ncols*nrows);
+    printf("%s\n", dataFile.toStdString().c_str());
+    QFile data(dataFile);
+    if (!data.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qCritical("ERROR: Could not open data file!");
+        std::abort();
+    }
+
+    w_cam.resize(dataPoints);
     K_pos = QVector3D(0.f,0.f,0.f);
+
+    while (!data.atEnd()) {
+        // read the data file
+        QString line = data.readLine();
+        int index;
+        double x,y,z;
+        QStringList args = line.split(',');
+        if (args.size() == 4 && index < dataPoints) {
+            index = args[0].toInt();
+            x = args[1].toDouble();
+            y = args[2].toDouble();
+            z = args[3].toDouble();
+            K_pos = QVector3D(x,y,z);
+            w_cam[index-1] = QVector4D(x,y,z,1);
+        } else {
+            qCritical("ERROR: Invalid data line!");
+            std::abort();
+        }
+    }
+
+    if (dataPoints < 1) {
+        qCritical("ERROR: No training images!");
+        std::abort();
+    }
+
+     if (!foundData) {
+        qCritical("ERROR: No training metadata!");
+        std::abort();
+    }
+    
+    qDebug() << "Founded " << dataPoints << "training images!";
+    std::vector<uint8_t> imageData; 
     imgWidth = -1;
     imgHeight = -1;
-    // Now  get the parameters of each camera from the file name
+    // Now  get the training images
     for (int i = 0; i < files.size(); i++) {
         QFileInfo f(files[i]);
         if (f.suffix() == "png") {
-            int row, col;
-            double camx, camy;
-            char ext[64];
-            int ret = sscanf(files[i].toStdString().c_str(),
-                             "out_%d_%d_%lf_%lf%s", &row, &col, &camy, &camx, ext);
-
-            if (ret == 5) {
-                int camera_index = col+row*ncols;
-                camy *= -1; // Stanford LF Data has inverted y axis
-                w_cam[camera_index] = QVector4D(camx,camy,0,1);
-                qDebug( "Camera (c,r)=(%d,%d) at (x,y)=(%g,%g) ", col, row, camx, camy );
-                K_pos += QVector3D(camx,camy,0.f);
-
-                QImage img(QString(training_dir) + "/" + files[i]);
-                if( imgWidth == -1 ) { // First image loaded
-                    imgWidth = img.width();
-                    imgHeight = img.height();
-
-                    imageData.resize((rMax * cMax) * imgHeight * imgWidth * 4);
-                }
-                assert( imgWidth == img.width() && imgHeight == img.height() ); // All images must be the same
-
-                for (int y = 0; y < imgHeight; y++) {
-                    for (int x = 0; x < imgWidth; x++) {                
-                        const QRgb color = img.pixel(x, y); // For compatibility with older Qt, pixel() instead of pixelColor()
-                        imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
-                        imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
-                        imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
-                        imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
-                    }
-                }
-
-                qDebug() << "loaded";
-
-            } else {
-                qCritical("ERROR: Invalid File name!");
-                std::abort();
+            bool flag;
+            int camera_index = f.baseName().toInt(&flag)-1;
+            if(!flag) {
+                qCritical("ERROR: Incorrect image name!");
+                std::abort(); 
             }
+            QImage img(QString(training_dir) + "/" + files[i]);
+            if( imgWidth == -1 ) { // First image loaded
+                imgWidth = img.width();
+                imgHeight = img.height();
+                imageData.resize((dataPoints) * imgHeight * imgWidth * 4);
+            }
+            assert( imgWidth == img.width() && imgHeight == img.height() ); // All images must be the same
+            for (int y = 0; y < imgHeight; y++) {
+                for (int x = 0; x < imgWidth; x++) {                
+                    const QRgb color = img.pixel(x, y); // For compatibility with older Qt, pixel() instead of pixelColor()
+                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
+                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
+                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
+                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
+                }
+            }
+            qDebug() << "loaded: " << i;
         }
     }
-    // Put the virtual camera in the center 
-    K_pos /= (double)w_cam.size();
-    K_pos.setZ(-40.f);
-    K_pos_0 = K_pos;
     qDebug() << "VCamera" << "at (" << K_pos.x() << ", " << K_pos.y() <<")";
-
 
     try {
 
-        lfData = cl::Image3D(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+        renderData = cl::Image3D(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
 					  // CL_RGBA - because Nvidia does not support RGB, we need to use RGBA
 		              // CL_UNORM_INT8 - pixels should be read with read_imagef. The values will be normalized 0-1
                       cl::ImageFormat(CL_RGBA, CL_UNORM_INT8), 
                       imgWidth,
                       imgHeight,
-                      rMax * cMax,
+                      dataPoints,
                       0,
                       0,
                       imageData.data());
 
-        camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*nrows*ncols);
-		apertureTransMats = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(float) * 16);
+        camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*dataPoints);
+		//apertureTransMats = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(float) * 16);
 		calculateArrayCameraViewTransform();
 
-        pixelTransMats = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16*nrows*ncols);
-        calculateAllTransforms();
+        //pixelTransMats = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16*dataPoints);
+        //calculateAllTransforms();
 
-        kernel.setArg(0,lfData);
-        kernel.setArg(2,pixelTransMats);
-        kernel.setArg(3,apertureTransMats);
+        kernel.setArg(0,renderData);
+        //kernel.setArg(2,pixelTransMats);
+        //kernel.setArg(3,apertureTransMats);
         kernel.setArg(4,camPos);
-        kernel.setArg(5,apertureSize);
-        kernel.setArg(6,nrows);
-        kernel.setArg(7,ncols);
+        //kernel.setArg(5,apertureSize);
+        //kernel.setArg(6,nrows);
+        //kernel.setArg(7,ncols);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
