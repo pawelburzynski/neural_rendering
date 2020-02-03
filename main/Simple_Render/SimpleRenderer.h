@@ -33,7 +33,7 @@ private:
 
     // OpenCL stuff 
     void initOpenCL();
-    void calculateArrayCameraViewTransform();
+    void prepareCamPosArr();
     void calculateAllTransforms();
     cl::Platform platform;
     cl::Device device;
@@ -53,11 +53,7 @@ private:
     // Tranformation Matrices
     std::vector<QMatrix4x4> Vi;
     std::vector<QVector4D> w_cam; // World coordindates of each camera
-	std::vector<float> transMatsVec; // Transformation matrices for all array cameras
 	std::vector<float> camPosArr;
-	float apertureTrans[16];  // Aperture transformations
-    cl::Buffer pixelTransMats;   // Matrix_virtual_camera_pixel_to_camera_[i]_pixel
-    cl::Buffer apertureTransMats; // Matric_virtual_camera_pixel_to_aperture_plane_coordinate
     cl::Buffer camPos;  // World coordindates of each camera
 };
 

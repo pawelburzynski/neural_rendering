@@ -38,12 +38,6 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
     unsigned char* data = NULL;
     try {
         updateViewSize( destSize.width(), destSize.height() );
-
-//        qDebug() << device.getInfo<CL_DEVICE_IMAGE2D_MAX_WIDTH>();
-        calculateAllTransforms();
-		kernel.setArg(2,pixelTransMats);
-        kernel.setArg(3,apertureTransMats);
-        kernel.setArg(5,apertureSize);
 		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
 
         // Read Image back and display
@@ -64,128 +58,21 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
     delete[] data;
 }
 
-// Calculate View tranformation matrix for each camera and fill camera position buffer
-void SimpleRenderer::calculateArrayCameraViewTransform()
+void SimpleRenderer::prepareCamPosArr()
 {
-    camPosArr.resize(3*dataPoints);
+    camPosArr.resize(3*(dataPoints+1));
     // View Transformation matrices for cameras
     for (int i = 0; i < dataPoints; i++) {
-        QMatrix4x4 vij; // View matrix for each array camera
         QVector4D &w_cam_i = w_cam[i];
-//			vij = lookAtRH(QVector3D(K_pos_0.x(), K_pos_0.y(), 0), QVector3D(K_pos_0.x(), K_pos_0.y(), 1), QVector3D(0, 1, 0));
-        vij = lookAtRH(QVector3D(w_cam_i.x(),w_cam_i.y(),0), QVector3D(w_cam_i.x(),w_cam_i.y(),1), QVector3D(0,1,0));
-//			vij.translate(QVector3D(-w_cam_i.x(), -w_cam_i.y(), 0));
-        Vi.push_back(vij);
         camPosArr[i*3+0] = (float)w_cam_i.x();
         camPosArr[i*3+1] = (float)w_cam_i.y();
         camPosArr[i*3+2] = 0.0f;
     }
-    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*dataPoints,camPosArr.data());
+        camPosArr[dataPoints*3+0] = (float)w_cam[0].x();
+        camPosArr[dataPoints*3+1] = (float)w_cam[0].y();
+        camPosArr[dataPoints*3+2] = 0.0f;
+    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(dataPoints+1),camPosArr.data());
 }
-
-void SimpleRenderer::calculateAllTransforms()
-{
-    /*
-    // Intrinsic camera matrix of data camera
-	float proj_d = tan(camera_fov / 2.f * M_PI / 180.f);
-	QMatrix4x4 Kci (imgWidth/proj_d,  0.0f,           0.0f,  imgWidth/2.0f,
-                    0.0f,           -imgWidth/proj_d,  0.0f,  imgHeight/2.0f,
-                    0.0f,           0.0f,           1.0f,  0.0f,
-                    0.0f,           0.0f,           0.0f,  1.0f);
-
-	// Intrinsic camera matrix of the virtual camera
-	QMatrix4x4 KK(viewWidth/proj_d, 0.0f, 0.0f, viewWidth / 2.0f,
-		0.0f, -viewWidth/proj_d, 0.0f, viewHeight / 2.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-
-
-    QVector3D N_F(0.f,0.f,1.f); // Normal of the focus plane
-    QVector3D w_F(0.f,0.f,focus); // Point of the focus plane
-
-    // Projection matrix for cameras in the array
-	QMatrix4x4 Pc(1.0f,     0.0f,      0.0f,  0.0f,
-                    0.0f, 1.0f,      0.0f,  0.0f,
-                    0.0f,     0.0f,  1.0f,  0.0f,
-                    0.0f,      0.0f,      1.0f,  0.0f);
-
-    QMatrix4x4 Vk;  // View matrix for the virtual camera K	
-	Vk = lookAtRH(K_pos, K_pos + QVector3D(0, 0, 1), QVector3D(0, 1, 0));
-
-
-	QMatrix4x4 PcK = Pc;
-    // Specifying focal plane in the virtual camera K coordinates
-	PcK.setRow(2, QVector4D(N_F.x(), N_F.y(), N_F.z(), -QVector3D::dotProduct(N_F, w_F)));
-
-	QMatrix4x4 transWK = KK * PcK * Vk;  // From World to Virtual camera K coordinates
-
-//	QVector4D w_Fh(100, -100, focus+100, 1);
-//	QVector4D k_test(100, 100, 0, 1);
-
-	QMatrix4x4 transKW = transWK.inverted();
-
-    transMatsVec.resize(16*dataPoints);
-    int ndx = 0;
-    for (int i = 0; i < nrows; i++) {
-        for (int j = 0; j < ncols; j++) {
-
-            int cam_index = i*ncols + j;
-            // Transform focal plane equation to the camera array coordinates
-            QMatrix4x4 KI = Vi[cam_index]*Vk.inverted(); // Transformation from the virtual camera to camera array 
-            QMatrix4x4 KIN = QMatrix4x4(KI.normalMatrix());
-            QVector3D N_Ft = KIN*N_F; // Transform K -> Ci camera coordinates
-            QVector3D w_Ft = KI*w_F; // Transform K -> Ci camera coordinates
-            
-            // Since Stanford LF images are cropped/rotated, Kci needs to be updated to simulate the effect
-            float xshift = camPosArr[cam_index*3+0] - K_pos_0.x(); // Horizontal Distance of this camera from center of LF
-            float yshift = camPosArr[cam_index*3+1] - K_pos_0.y(); // Vertical Distance of this camera from center of LF
-            QMatrix4x4 Kci_cropped (imgWidth/proj_d,  0.0f,             0.0f,  imgWidth/2.0f + xshift,  // Shift the camera's princpal point propotionally to distance from center (non-rotated) camera [approximation]
-                                    0.0f,           -imgWidth/proj_d,   0.0f,  imgHeight/2.0f - yshift,
-                                    0.0f,           0.0f,               1.0f,  0.0f,
-                                    0.0f,           0.0f,               0.0f,  1.0f);
-
-            QMatrix4x4 PcI = Pc;	
-			PcI.setRow(2, QVector4D(N_Ft.x(), N_Ft.y(), N_Ft.z(), -QVector3D::dotProduct(N_Ft, Vi[i*ncols + j]*w_Ft)));
-			QMatrix4x4 transWC = Kci_cropped * PcI * Vi[cam_index]; // From the world coordinates to the camera-array pixel coordinates
-			QMatrix4x4 transKC = transWC*transKW; 
-
-			QMatrix4x4 transWCt = transKC.transposed();
-            for(int k=0;k<16;k++){
-				// Copy the matrix elements in the row-major order
-				transMatsVec[16*ndx+k] = *(transWCt.data()+k);
-            }
-            ndx++;
-        }
-    }
-
-    // Send data to GPU
-    queue.enqueueWriteBuffer(pixelTransMats,CL_TRUE,0,sizeof(float)*16*nrows*ncols,transMatsVec.data());
-
-	// Aperture transform: from pK to w_A
-
-	QVector3D N_A(0.f, 0.f, 1.f); // Normal of the aperture/camera plane
-	QVector3D w_A(0.f, 0.f, 0.f); // Point of the aperture/camera plane
-	
-	QMatrix4x4 PcA(1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f);
-
-	QMatrix4x4 transAK = Kci * PcA * Vk; // Transformation from word to virtual camera K pixel coords
-	// Because the aperture plane is in the word and not camera coordinate system, it is the easiest
-	// to set the 3rd row of the matrix to the desired plane equation
-	transAK.setRow(2, QVector4D(N_A.x(), N_A.y(), N_A.z(), -QVector3D::dotProduct(N_A, w_A)) );
-
-	QMatrix4x4 transKAt = transAK.inverted().transposed();
-
-	for (int k = 0; k<16; k++) {
-		// Copy the matrix elements in the row-major order
-		apertureTrans[k] = *(transKAt.data() + k);
-	}
-
-	queue.enqueueWriteBuffer(apertureTransMats, CL_TRUE, 0, sizeof(float) * 16, apertureTrans);
-    */
-} 
 
 // Read training data
 void SimpleRenderer::readTrainingData(const char *training_dir)
@@ -207,7 +94,7 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
         }
     }
 
-    printf("%s\n", dataFile.toStdString().c_str());
+    //printf("%s\n", dataFile.toStdString().c_str());
     QFile data(dataFile);
     if (!data.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical("ERROR: Could not open data file!");
@@ -264,7 +151,7 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
             if( imgWidth == -1 ) { // First image loaded
                 imgWidth = img.width();
                 imgHeight = img.height();
-                imageData.resize((dataPoints) * imgHeight * imgWidth * 4);
+                imageData.resize((dataPoints+1) * imgHeight * imgWidth * 4);
             }
             assert( imgWidth == img.width() && imgHeight == img.height() ); // All images must be the same
             for (int y = 0; y < imgHeight; y++) {
@@ -274,6 +161,12 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                     imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
                     imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
                     imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
+                    if (camera_index == 0){
+                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
+                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
+                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
+                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
+                    }
                 }
             }
             qDebug() << "loaded: " << i;
@@ -289,25 +182,16 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                       cl::ImageFormat(CL_RGBA, CL_UNORM_INT8), 
                       imgWidth,
                       imgHeight,
-                      dataPoints,
+                      dataPoints+1,
                       0,
                       0,
                       imageData.data());
 
-        camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*dataPoints);
-		//apertureTransMats = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(float) * 16);
-		calculateArrayCameraViewTransform();
-
-        //pixelTransMats = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16*dataPoints);
-        //calculateAllTransforms();
+        camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(dataPoints+1));
+		prepareCamPosArr();
 
         kernel.setArg(0,renderData);
-        //kernel.setArg(2,pixelTransMats);
-        //kernel.setArg(3,apertureTransMats);
-        kernel.setArg(4,camPos);
-        //kernel.setArg(5,apertureSize);
-        //kernel.setArg(6,nrows);
-        //kernel.setArg(7,ncols);
+        kernel.setArg(2,camPos);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
@@ -365,9 +249,9 @@ void SimpleRenderer::initOpenCL()
 
 		cl::Program::Sources sources;
 
-		std::ifstream kernelFile("render.cl");
+		std::ifstream kernelFile("simple_render.cl");
 		if (kernelFile.fail()) {
-			std::cout << "ERROR: can' read the kernel file\n";
+			std::cout << "ERROR: can't read the kernel file\n";
 			exit(1);
 		}
 		std::string src(std::istreambuf_iterator<char>(kernelFile), (std::istreambuf_iterator<char>()));
@@ -381,7 +265,7 @@ void SimpleRenderer::initOpenCL()
 			exit(1);
 		}
 		queue = cl::CommandQueue(context, device);
-		kernel = cl::Kernel(program, "lfrender");
+		kernel = cl::Kernel(program, "simple_render");
 	}
 	catch(cl::Error err) {
 		std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
