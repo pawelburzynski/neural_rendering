@@ -18,8 +18,8 @@ __kernel void simple_render(__read_only image3d_t trainingCamImages, // 3D Image
     float height = (float)(get_global_id(1));
     float4 color1 = read_imagef(trainingCamImages, samp, (float4)(width+0.5, height+0.5, ind-0.5, 0));
     float4 color2 = read_imagef(trainingCamImages, samp, (float4)(width+0.5, height+0.5, ind+0.5, 0));
-    float del = CiPos[ind] - CiPos[ind-1];
-    float4 color = color1*(ang - CiPos[ind-1])+color2*(CiPos[ind]-ang);
+    float del = CamAng[ind] - CamAng[ind-1];
+    float4 color = color2*(ang - CamAng[ind-1])+color1*(CamAng[ind]-ang);
     color/=del;
     // Coords of the pixel in the rendered virtual camera image
     //float4 pk = (float4)((float)get_global_id(0), (float)get_global_id(1), 0.0f, 1.0f);
