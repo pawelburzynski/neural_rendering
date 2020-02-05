@@ -54,7 +54,11 @@ private:
     std::vector<QMatrix4x4> Vi;
     std::vector<QVector4D> w_cam; // World coordindates of each camera
 	std::vector<float> camPosArr;
-    cl::Buffer camPos;  // World coordindates of each camera
+    std::vector<float> camAngArr;
+    cl::Buffer camPos;      // World coordindates of each camera
+    cl::Buffer camAng;      // Angle of each camera
+    float ang;         // angle of a view
+    int ind;         // index of camera to consider
 };
 
 

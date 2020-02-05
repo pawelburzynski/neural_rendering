@@ -8,7 +8,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QDoubleSpinBox>
-#include "LFViewWidget.h"
+#include "ViewWidget.h"
 
 class ViewerWindow : public QMainWindow
 {

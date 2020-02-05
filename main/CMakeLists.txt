@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8.11)
-project (Practical_2)
+project (Simple_Render)
 
 set( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 

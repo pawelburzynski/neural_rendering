@@ -19,8 +19,8 @@
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_render.dir/LFViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/LFViewWidget.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/LFViewWidget.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_render.dir/ViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/ViewWidget.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/ViewWidget.cpp"
 },
 
 {
@@ -31,8 +31,8 @@
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_render.dir/moc_LFViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_LFViewWidget.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_LFViewWidget.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -isystem /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWidget.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWidget.cpp"
 },
 
 {

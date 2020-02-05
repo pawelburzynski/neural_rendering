@@ -24,6 +24,23 @@ QMatrix4x4 lookAtRH(QVector3D eye, QVector3D center, QVector3D up)
 	return inv*la;
 }
 
+double angle(QVector4D pos) {
+    double s = asin(pos.y() / sqrt(pos.x()*pos.x()+pos.y()*pos.y()));
+    if (pos.x() > - 0.0001) {
+        return s + M_PI/2.0;
+    } else {
+        return 3*M_PI/2.0-s;
+    }
+}
+double angle(QVector3D pos) {
+    double s = asin(pos.y() / sqrt(pos.x()*pos.x()+pos.y()*pos.y()));
+    if (pos.x() > - 0.0001) {
+        return s + M_PI/2.0;
+    } else {
+        return 3*M_PI/2.0-s;
+    }
+}
+
 SimpleRenderer::SimpleRenderer() :
 	viewWidth(0), viewHeight(0), dataPoints(0)
 {
@@ -38,8 +55,15 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
     unsigned char* data = NULL;
     try {
         updateViewSize( destSize.width(), destSize.height() );
+        ang = angle(K_pos);
+        ind = 0;
+        while( ang >= camAngArr[ind]) {
+            ind++;
+        }
+        qDebug() << "angle: " << ang << " index: " << ind;
+        kernel.setArg(4,ang);
+        kernel.setArg(5,ind);
 		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
-
         // Read Image back and display
         data = new unsigned char[viewWidth*viewHeight*4];
         cl::size_t<3> origin;
@@ -61,17 +85,27 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
 void SimpleRenderer::prepareCamPosArr()
 {
     camPosArr.resize(3*(dataPoints+1));
+    camAngArr.resize(dataPoints+1);
     // View Transformation matrices for cameras
     for (int i = 0; i < dataPoints; i++) {
         QVector4D &w_cam_i = w_cam[i];
         camPosArr[i*3+0] = (float)w_cam_i.x();
         camPosArr[i*3+1] = (float)w_cam_i.y();
         camPosArr[i*3+2] = 0.0f;
+        camAngArr[i] = angle(w_cam[i]);
+        if(i>dataPoints/2 && camAngArr[i]<0) {
+            camAngArr[i] += 2*M_PI;
+        }
     }
         camPosArr[dataPoints*3+0] = (float)w_cam[0].x();
         camPosArr[dataPoints*3+1] = (float)w_cam[0].y();
         camPosArr[dataPoints*3+2] = 0.0f;
+        camAngArr[dataPoints] = angle(w_cam[0]);
+        if(camAngArr[dataPoints]<0) {
+            camAngArr[dataPoints] += 2*M_PI;
+        }
     queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(dataPoints+1),camPosArr.data());
+    queue.enqueueWriteBuffer(camAng,CL_TRUE,0,sizeof(float)*(dataPoints+1),camAngArr.data());
 }
 
 // Read training data
@@ -169,13 +203,12 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                     }
                 }
             }
-            qDebug() << "loaded: " << i;
+            qDebug() << "loaded: " << camera_index << ", angle: " << angle(w_cam[camera_index]);
         }
     }
     qDebug() << "VCamera" << "at (" << K_pos.x() << ", " << K_pos.y() <<")";
 
     try {
-
         renderData = cl::Image3D(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
 					  // CL_RGBA - because Nvidia does not support RGB, we need to use RGBA
 		              // CL_UNORM_INT8 - pixels should be read with read_imagef. The values will be normalized 0-1
@@ -186,12 +219,15 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                       0,
                       0,
                       imageData.data());
-
         camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(dataPoints+1));
+        camAng = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*(dataPoints+1));
+       
 		prepareCamPosArr();
-
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);
+        kernel.setArg(3,camAng);
+        kernel.setArg(4,ang);
+        kernel.setArg(5,ind);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;

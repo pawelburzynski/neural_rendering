@@ -15,7 +15,7 @@ ViewerWindow::ViewerWindow()
 	cameraPosLabel = new QLabel();
     cameraPosLabel->setAlignment(Qt::AlignHCenter);
 
-	LFViewWidget * lfViewWidget = new LFViewWidget(&simpleRenderer, this);
+	ViewWidget * lfViewWidget = new ViewWidget(&simpleRenderer, this);
 
 	QHBoxLayout *main_layout = new QHBoxLayout;
     main_layout->addWidget(lfViewWidget,2);
@@ -77,17 +77,17 @@ ViewerWindow::ViewerWindow()
 
     lfViewWidget->setFocus();
 
-	connect(lfViewWidget, &LFViewWidget::KposChanged, this, &ViewerWindow::KposChanged);
-	connect(lfViewWidget, &LFViewWidget::focalChanged, focalSB, &QDoubleSpinBox::setValue);
-	connect(lfViewWidget, &LFViewWidget::apertureChanged, apertureSB, &QDoubleSpinBox::setValue);
-	connect(lfViewWidget, &LFViewWidget::fovChanged, fovSB, &QDoubleSpinBox::setValue);
-	connect(lfViewWidget, &LFViewWidget::fovChanged, this, &ViewerWindow::fovUpdated);
+	connect(lfViewWidget, &ViewWidget::KposChanged, this, &ViewerWindow::KposChanged);
+	connect(lfViewWidget, &ViewWidget::focalChanged, focalSB, &QDoubleSpinBox::setValue);
+	connect(lfViewWidget, &ViewWidget::apertureChanged, apertureSB, &QDoubleSpinBox::setValue);
+	connect(lfViewWidget, &ViewWidget::fovChanged, fovSB, &QDoubleSpinBox::setValue);
+	connect(lfViewWidget, &ViewWidget::fovChanged, this, &ViewerWindow::fovUpdated);
 
-	connect(lfViewWidget, &LFViewWidget::renderTimeUpdated, this, &ViewerWindow::renderTimeUpdated);
+	connect(lfViewWidget, &ViewWidget::renderTimeUpdated, this, &ViewerWindow::renderTimeUpdated);
 
-	connect(focalSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), lfViewWidget, &LFViewWidget::setFocal);
-	connect(apertureSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), lfViewWidget, &LFViewWidget::setAperture);
-	connect(fovSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), lfViewWidget, &LFViewWidget::setFov);
+	connect(focalSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), lfViewWidget, &ViewWidget::setFocal);
+	connect(apertureSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), lfViewWidget, &ViewWidget::setAperture);
+	connect(fovSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), lfViewWidget, &ViewWidget::setFov);
 
     //QTimer *timer = new QTimer(this);
     //connect(timer, &QTimer::timeout, lfViewWidget, &LFViewWidget::animate);
