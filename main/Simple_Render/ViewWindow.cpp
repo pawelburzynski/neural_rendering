@@ -124,3 +124,8 @@ void ViewerWindow::loadTrainingData(QString training_dir)
 {
 	simpleRenderer.readTrainingData(training_dir.toLocal8Bit());
 }
+
+void ViewerWindow::generateEvaluationOutput(QString output_dir) 
+{
+	simpleRenderer.generateEvaluationOutput(output_dir.toLocal8Bit());
+}

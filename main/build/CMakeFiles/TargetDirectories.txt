@@ -1,8 +1,0 @@
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/CMakeFiles/rebuild_cache.dir
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/CMakeFiles/edit_cache.dir
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Check/CMakeFiles/rebuild_cache.dir
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Check/CMakeFiles/list_platforms.dir
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Check/CMakeFiles/edit_cache.dir
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/CMakeFiles/rebuild_cache.dir
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/CMakeFiles/simple_render.dir
-/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/CMakeFiles/edit_cache.dir

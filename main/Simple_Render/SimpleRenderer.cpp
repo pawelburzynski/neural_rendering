@@ -84,28 +84,36 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
 
 void SimpleRenderer::prepareCamPosArr()
 {
-    camPosArr.resize(3*(dataPoints+1));
-    camAngArr.resize(dataPoints+1);
+    camPosArr.resize(3*(training_dataPoints+1));
+    camAngArr.resize(training_dataPoints+1);
     // View Transformation matrices for cameras
-    for (int i = 0; i < dataPoints; i++) {
-        QVector4D &w_cam_i = w_cam[i];
+    for (int i = 0; i < training_dataPoints; i++) {
+        QFileInfo f(training_data[i]);
+        bool flag;
+        int camera_index = f.baseName().toInt(&flag)-1;
+        if(!flag) {
+            qCritical("ERROR: Incorrect image name!");
+            std::abort(); 
+        }
+        QVector4D &w_cam_i = w_cam[camera_index];
         camPosArr[i*3+0] = (float)w_cam_i.x();
         camPosArr[i*3+1] = (float)w_cam_i.y();
         camPosArr[i*3+2] = 0.0f;
-        camAngArr[i] = angle(w_cam[i]);
-        if(i>dataPoints/2 && camAngArr[i]<0) {
+        camAngArr[i] = angle(w_cam[camera_index]);
+        if(i>training_dataPoints/2 && camAngArr[i]<0) {
             camAngArr[i] += 2*M_PI;
         }
     }
-        camPosArr[dataPoints*3+0] = (float)w_cam[0].x();
-        camPosArr[dataPoints*3+1] = (float)w_cam[0].y();
-        camPosArr[dataPoints*3+2] = 0.0f;
-        camAngArr[dataPoints] = angle(w_cam[0]);
-        if(camAngArr[dataPoints]<0) {
-            camAngArr[dataPoints] += 2*M_PI;
-        }
-    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(dataPoints+1),camPosArr.data());
-    queue.enqueueWriteBuffer(camAng,CL_TRUE,0,sizeof(float)*(dataPoints+1),camAngArr.data());
+
+    camPosArr[training_dataPoints*3+0] = (float)camPosArr[0];
+    camPosArr[training_dataPoints*3+1] = (float)camPosArr[1];
+    camPosArr[training_dataPoints*3+2] = 0.0f;
+    camAngArr[training_dataPoints] = camAngArr[0];
+    if(camAngArr[training_dataPoints]<0) {
+        camAngArr[training_dataPoints] += 2*M_PI;
+    }
+    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(training_dataPoints+1),camPosArr.data());
+    queue.enqueueWriteBuffer(camAng,CL_TRUE,0,sizeof(float)*(training_dataPoints+1),camAngArr.data());
 }
 
 // Read training data
@@ -171,9 +179,31 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
     std::vector<uint8_t> imageData; 
     imgWidth = -1;
     imgHeight = -1;
-    // Now  get the training images
-    for (int i = 0; i < files.size(); i++) {
+    
+    //prepare training and evaluation set
+
+    std::random_shuffle(files.begin(), files.end());
+    
+    for(int i = 0; i < 4*dataPoints/5; i++) {
         QFileInfo f(files[i]);
+        if (f.suffix() == "png") {
+            training_data.append(files[i]);
+        }
+    }
+    for(int i = 4*dataPoints/5; i < dataPoints; i++ ) {
+        QFileInfo f(files[i]);
+        if (f.suffix() == "png") {
+            evaluation_data.append(files[i]);
+        }
+    }
+    training_dataPoints = training_data.size();
+    eval_dataPoints = evaluation_data.size();
+    training_data.sort();
+    evaluation_data.sort();
+    
+    // Now  get the training images
+    for (int i = 0; i < training_data.size(); i++) {
+        QFileInfo f(training_data[i]);
         if (f.suffix() == "png") {
             bool flag;
             int camera_index = f.baseName().toInt(&flag)-1;
@@ -181,25 +211,25 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                 qCritical("ERROR: Incorrect image name!");
                 std::abort(); 
             }
-            QImage img(QString(training_dir) + "/" + files[i]);
+            QImage img(QString(training_dir) + "/" + training_data[i]);
             if( imgWidth == -1 ) { // First image loaded
                 imgWidth = img.width();
                 imgHeight = img.height();
-                imageData.resize((dataPoints+1) * imgHeight * imgWidth * 4);
+                imageData.resize((training_dataPoints+1) * imgHeight * imgWidth * 4);
             }
             assert( imgWidth == img.width() && imgHeight == img.height() ); // All images must be the same
             for (int y = 0; y < imgHeight; y++) {
                 for (int x = 0; x < imgWidth; x++) {                
                     const QRgb color = img.pixel(x, y); // For compatibility with older Qt, pixel() instead of pixelColor()
-                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
-                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
-                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
-                    imageData[((camera_index * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
-                    if (camera_index == 0){
-                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
-                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
-                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
-                        imageData[((dataPoints * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
+                    imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
+                    imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
+                    imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
+                    imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
+                    if (i == 0){
+                        imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
+                        imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
+                        imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);
+                        imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 3] = 255;
                     }
                 }
             }
@@ -215,12 +245,12 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                       cl::ImageFormat(CL_RGBA, CL_UNORM_INT8), 
                       imgWidth,
                       imgHeight,
-                      dataPoints+1,
+                      training_dataPoints+1,
                       0,
                       0,
                       imageData.data());
-        camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(dataPoints+1));
-        camAng = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*(dataPoints+1));
+        camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
+        camAng = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*(training_dataPoints+1));
        
 		prepareCamPosArr();
         kernel.setArg(0,renderData);
@@ -234,6 +264,10 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
         exit(1);
     }
 
+}
+
+void SimpleRenderer::generateEvaluationOutput(const char *output_dir) {
+    // TODO IMPLEMENT
 }
 
 void SimpleRenderer::updateViewSize(int newWidth, int newHeight)

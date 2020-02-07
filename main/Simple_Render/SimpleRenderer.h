@@ -19,6 +19,7 @@ public:
 public:
     void paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize);
     void readTrainingData(const char *training_dir);
+    void generateEvaluationOutput(const char *output_dir);
 
     float focus = 500.0f;
     float apertureSize = 8.0f;
@@ -48,8 +49,14 @@ private:
     int imgWidth;
     int imgHeight;
     int dataPoints = 0;
+    int training_dataPoints = 0;
+    int eval_dataPoints = 0;
     int debug = 0;
 
+    // Input data
+    QStringList training_data;
+    QStringList evaluation_data;
+    
     // Tranformation Matrices
     std::vector<QMatrix4x4> Vi;
     std::vector<QVector4D> w_cam; // World coordindates of each camera

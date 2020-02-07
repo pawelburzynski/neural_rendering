@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     //parser.addVersionOption();
     parser.addPositionalArgument("training_dir", QString("Directory with training images."));
-
+    parser.addPositionalArgument("output_dir", QString("Directory with output images."));
     parser.process(app);
 
 
@@ -92,13 +92,17 @@ int main(int argc, char *argv[])
     QSurfaceFormat::setDefaultFormat(fmt);
 
     QString training_dir = "../Data/checkboard_plane";
+    QString output_dir = "../Output/checkboard_plane";
     const QStringList args = parser.positionalArguments();
     if( args.length()>0 )
-        training_dir=args[0];
+        training_dir = args[0];
+    if( args.length()>1 )
+        output_dir = args[1];
 
     ViewerWindow window;
     window.show();
     window.loadTrainingData(training_dir);
+    window.generateEvaluationOutput(output_dir);
     return app.exec();
 
 }

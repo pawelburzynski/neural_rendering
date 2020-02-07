@@ -1,6 +1,7 @@
 #include "ViewWidget.h"
 #include "SimpleRenderer.h"
 #include <algorithm>
+#include <cmath>
 
 #include <QPainter>
 #include <QTimer>
@@ -80,6 +81,7 @@ void ViewWidget::keyPressEvent(QKeyEvent *event)
 	QVector3D K_pos = getKpos();
 	float focus = getFocal();
 
+	const float angleStep = 0.1;
 	const float posStep = .5f;
 	const float focusStep = 10.f;
 	const float apertureStep = 1.f;
@@ -109,10 +111,18 @@ void ViewWidget::keyPressEvent(QKeyEvent *event)
 		setKpos(K_pos);
     }
     if(event->key() == Qt::Key_Left){
-		setAperture(getAperture() - apertureStep);
+		float x = K_pos.x()*cos(-angleStep/180.0 * M_PI) - K_pos.y()*sin(-angleStep/180.0 * M_PI);
+		float y = K_pos.x()*sin(-angleStep/180.0 * M_PI) + K_pos.y()*cos(-angleStep/180.0 * M_PI);
+		K_pos.setX(x);
+		K_pos.setY(y);
+		setKpos(K_pos);
     }
     if(event->key() == Qt::Key_Right){
-		setAperture(getAperture() + apertureStep);	
+		float x = K_pos.x()*cos(angleStep/180.0 * M_PI) - K_pos.y()*sin(angleStep/180.0 * M_PI);
+		float y = K_pos.x()*sin(angleStep/180.0 * M_PI) + K_pos.y()*cos(angleStep/180.0 * M_PI);
+		K_pos.setX(x);
+		K_pos.setY(y);
+		setKpos(K_pos);
     }
     if(event->key() == Qt::Key_Up){
 		setFocal(std::min(getFocal() + focusStep, LF_max_focal));
@@ -149,11 +159,15 @@ void ViewWidget::mouseMoveEvent(QMouseEvent * event)
 	else {
 		QVector3D newK_pos;
 		if (event->modifiers() == Qt::ShiftModifier) {
-			newK_pos = mouseDragStartK_pos + QVector3D(delta.x(), delta.y(), 0.f) / 2.f;
+			newK_pos = mouseDragStartK_pos;
 		}
 		else {
-			newK_pos = mouseDragStartK_pos + QVector3D(delta.x(), 0.f, -delta.y()) / 2.f;
-			//setFocal(mouseDragFocal - (float)delta.y());
+			float ang = -delta.x();
+			float x = mouseDragStartK_pos.x()*cos(ang/180.0 * M_PI) - mouseDragStartK_pos.y()*sin(ang/180.0 * M_PI);
+			float y = mouseDragStartK_pos.x()*sin(ang/180.0 * M_PI) + mouseDragStartK_pos.y()*cos(ang/180.0 * M_PI);
+			newK_pos = mouseDragStartK_pos + QVector3D(delta.x(), 0.f, -delta.y()) / 2.f;newK_pos = mouseDragStartK_pos;
+			newK_pos.setX(x);
+			newK_pos.setY(y);
 		}
 		setKpos(newK_pos);
 	}
