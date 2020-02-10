@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     ViewerWindow window;
     window.show();
     window.loadTrainingData(training_dir);
-    window.generateEvaluationOutput(output_dir);
-    return app.exec();
+    window.generateEvaluationOutput(training_dir, output_dir);
+    //return app.exec();
 
 }

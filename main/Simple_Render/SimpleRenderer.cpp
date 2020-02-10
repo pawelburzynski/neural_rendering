@@ -32,6 +32,7 @@ double angle(QVector4D pos) {
         return 3*M_PI/2.0-s;
     }
 }
+
 double angle(QVector3D pos) {
     double s = asin(pos.y() / sqrt(pos.x()*pos.x()+pos.y()*pos.y()));
     if (pos.x() > - 0.0001) {
@@ -40,6 +41,11 @@ double angle(QVector3D pos) {
         return 3*M_PI/2.0-s;
     }
 }
+
+double dist(QVector4D p1, QVector4D p2) {
+   return sqrt((p1.x()-p2.x())*(p1.x()-p2.x())+(p1.y()-p2.y())*(p1.y()-p2.y())+(p1.z()-p2.z())*(p1.z()-p2.z()));
+}
+
 
 SimpleRenderer::SimpleRenderer() :
 	viewWidth(0), viewHeight(0), dataPoints(0)
@@ -55,14 +61,31 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
     unsigned char* data = NULL;
     try {
         updateViewSize( destSize.width(), destSize.height() );
-        ang = angle(K_pos);
-        ind = 0;
-        while( ang >= camAngArr[ind]) {
-            ind++;
+     
+        std::vector<std::pair<double, int>> cams;
+        for (int j = 0; j < training_dataPoints; j++) {
+            QFileInfo f2(evaluation_data[j]);
+            bool flag2;
+            int camera_index2 = f2.baseName().toInt(&flag2)-1;
+            if(!flag2) {
+                qCritical("ERROR: Incorrect image name!");
+                std::abort(); 
+            }
+            QVector4D &w_cam_j = w_cam[camera_index2];
+            cams.push_back(std::make_pair(dist(w_cam_j,K_pos.toVector4D()),j));
         }
-        qDebug() << "angle: " << ang << " index: " << ind;
-        kernel.setArg(4,ang);
-        kernel.setArg(5,ind);
+        sort(cams.begin(), cams.end());
+        closestCamArr.resize(number_closest_points);
+        for (int j=0; j<number_closest_points; j++) {
+            closestCamArr[j] = cams[j].second;
+        }
+        std::vector<float> curPosArr;
+        curPosArr.push_back(K_pos.x());
+        curPosArr.push_back(K_pos.y());
+        curPosArr.push_back(K_pos.z());
+        curPosArr.push_back(1);
+        queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
+        queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
 		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
         // Read Image back and display
         data = new unsigned char[viewWidth*viewHeight*4];
@@ -85,7 +108,6 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
 void SimpleRenderer::prepareCamPosArr()
 {
     camPosArr.resize(3*(training_dataPoints+1));
-    camAngArr.resize(training_dataPoints+1);
     // View Transformation matrices for cameras
     for (int i = 0; i < training_dataPoints; i++) {
         QFileInfo f(training_data[i]);
@@ -99,21 +121,13 @@ void SimpleRenderer::prepareCamPosArr()
         camPosArr[i*3+0] = (float)w_cam_i.x();
         camPosArr[i*3+1] = (float)w_cam_i.y();
         camPosArr[i*3+2] = 0.0f;
-        camAngArr[i] = angle(w_cam[camera_index]);
-        if(i>training_dataPoints/2 && camAngArr[i]<0) {
-            camAngArr[i] += 2*M_PI;
-        }
     }
 
     camPosArr[training_dataPoints*3+0] = (float)camPosArr[0];
     camPosArr[training_dataPoints*3+1] = (float)camPosArr[1];
     camPosArr[training_dataPoints*3+2] = 0.0f;
-    camAngArr[training_dataPoints] = camAngArr[0];
-    if(camAngArr[training_dataPoints]<0) {
-        camAngArr[training_dataPoints] += 2*M_PI;
-    }
+
     queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(training_dataPoints+1),camPosArr.data());
-    queue.enqueueWriteBuffer(camAng,CL_TRUE,0,sizeof(float)*(training_dataPoints+1),camAngArr.data());
 }
 
 // Read training data
@@ -250,14 +264,15 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                       0,
                       imageData.data());
         camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
-        camAng = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*(training_dataPoints+1));
-       
+        closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*number_closest_points);
+        curPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*4);
+
 		prepareCamPosArr();
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);
-        kernel.setArg(3,camAng);
-        kernel.setArg(4,ang);
-        kernel.setArg(5,ind);
+        kernel.setArg(3,closestCam);
+        kernel.setArg(4,curPos);
+        kernel.setArg(5,number_closest_points);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
@@ -266,8 +281,72 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
 
 }
 
-void SimpleRenderer::generateEvaluationOutput(const char *output_dir) {
-    // TODO IMPLEMENT
+void SimpleRenderer::generateEvaluationOutput(const char *training_dir, const char *output_dir) {
+     for (int i = 0; i < eval_dataPoints; i++) {
+        QFileInfo f(evaluation_data[i]);
+        bool flag;
+        int camera_index = f.baseName().toInt(&flag)-1;
+        if(!flag) {
+            qCritical("ERROR: Incorrect image name!");
+            std::abort(); 
+        }
+        QVector4D &w_cam_i = w_cam[camera_index];
+        
+        if( dataPoints == 0 ) // No data available
+        return;
+
+        unsigned char* data = NULL;
+        try {
+            QImage img_sample(QString(training_dir) + "/" +f.filePath());
+            updateViewSize( img_sample.width(), img_sample.height() );
+            qDebug() << "Evaluation output #" << i;
+            
+            std::vector<std::pair<double, int>> cams;
+            for (int j = 0; j < training_dataPoints; j++) {
+                QFileInfo f2(training_data[j]);
+                bool flag2;
+                int camera_index2 = f2.baseName().toInt(&flag2)-1;
+                if(!flag2) {
+                    qCritical("ERROR: Incorrect image name!");
+                    std::abort(); 
+                }
+                QVector4D &w_cam_j = w_cam[camera_index2];
+                cams.push_back(std::make_pair(dist(w_cam_j,w_cam_i),j));
+            }
+            sort(cams.begin(), cams.end());
+            closestCamArr.resize(number_closest_points);
+            for (int j=0; j<number_closest_points; j++) {
+                closestCamArr[j] = cams[j].second;
+            }
+            std::vector<float> curPosArr;
+            curPosArr.resize(sizeof(float)*4);
+            curPosArr[0] = (w_cam_i.x());
+            curPosArr[1] = (w_cam_i.y());
+            curPosArr[2] = (w_cam_i.z());
+            curPosArr[3] = (w_cam_i.w());
+            queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
+            queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
+            queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
+            // Read Image back and display
+            data = new unsigned char[viewWidth*viewHeight*4];
+            cl::size_t<3> origin;
+            origin[0] = 0; origin[1] = 0, origin[2] = 0;
+            cl::size_t<3> region;
+            region[0] = viewWidth; region[1] = viewHeight; region[2] = 1;
+            queue.enqueueReadImage(vcamImage, CL_TRUE, origin, region, 0, 0 , data,  NULL, NULL);
+            queue.finish();
+
+            // write to a file
+            QImage img(data, viewWidth, viewHeight, QImage::Format_RGBA8888);
+            const QString &fileName_out = output_dir + QString::number(i)+"_out.png";
+            const QString &fileName_sample = output_dir + QString::number(i)+"sample.png";
+            img.save(fileName_out, "PNG");
+            img_sample.save(fileName_sample, "PNG");
+        } catch(cl::Error err) {
+            std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
+        }
+        delete[] data;
+     }
 }
 
 void SimpleRenderer::updateViewSize(int newWidth, int newHeight)

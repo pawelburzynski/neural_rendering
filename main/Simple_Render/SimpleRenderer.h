@@ -19,7 +19,7 @@ public:
 public:
     void paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize);
     void readTrainingData(const char *training_dir);
-    void generateEvaluationOutput(const char *output_dir);
+    void generateEvaluationOutput(const char *training_dir, const char *output_dir);
 
     float focus = 500.0f;
     float apertureSize = 8.0f;
@@ -52,6 +52,7 @@ private:
     int training_dataPoints = 0;
     int eval_dataPoints = 0;
     int debug = 0;
+    const int number_closest_points = 25;
 
     // Input data
     QStringList training_data;
@@ -61,11 +62,10 @@ private:
     std::vector<QMatrix4x4> Vi;
     std::vector<QVector4D> w_cam; // World coordindates of each camera
 	std::vector<float> camPosArr;
-    std::vector<float> camAngArr;
+    std::vector<int> closestCamArr;
+    cl::Buffer curPos;
     cl::Buffer camPos;      // World coordindates of each camera
-    cl::Buffer camAng;      // Angle of each camera
-    float ang;         // angle of a view
-    int ind;         // index of camera to consider
+    cl::Buffer closestCam; 
 };
 
 

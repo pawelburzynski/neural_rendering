@@ -18,7 +18,7 @@ public:
     ViewerWindow();
 
 	void loadTrainingData(QString training_dir);
-	void generateEvaluationOutput(QString output_dir);
+	void generateEvaluationOutput(QString training_dir, QString output_dir);
 
 public slots:
 	void KposChanged(QVector3D newKPos);
