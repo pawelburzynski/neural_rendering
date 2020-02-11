@@ -120,12 +120,12 @@ void SimpleRenderer::prepareCamPosArr()
         QVector4D &w_cam_i = w_cam[camera_index];
         camPosArr[i*3+0] = (float)w_cam_i.x();
         camPosArr[i*3+1] = (float)w_cam_i.y();
-        camPosArr[i*3+2] = 0.0f;
+        camPosArr[i*3+2] = (float)w_cam_i.z();
     }
 
     camPosArr[training_dataPoints*3+0] = (float)camPosArr[0];
     camPosArr[training_dataPoints*3+1] = (float)camPosArr[1];
-    camPosArr[training_dataPoints*3+2] = 0.0f;
+    camPosArr[training_dataPoints*3+2] = (float)camPosArr[2];
 
     queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(training_dataPoints+1),camPosArr.data());
 }
