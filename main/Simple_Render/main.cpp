@@ -98,11 +98,9 @@ int main(int argc, char *argv[])
         training_dir = args[0];
     if( args.length()>1 )
         output_dir = args[1];
-
     ViewerWindow window;
     window.show();
     window.loadTrainingData(training_dir);
     window.generateEvaluationOutput(training_dir, output_dir);
-    //return app.exec();
-
+    return app.exec();
 }

@@ -150,10 +150,10 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
         }
     }
 
-    //printf("%s\n", dataFile.toStdString().c_str());
+    qDebug() << training_dir << endl;
     QFile data(dataFile);
     if (!data.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qCritical("ERROR: Could not open data file!");
+        qCritical("ERROR: Could not open meta_data file!");
         std::abort();
     }
 

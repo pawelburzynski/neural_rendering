@@ -1,0 +1,12 @@
+-I/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/../include
+-I/usr/include
+-I/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/include
+-I/usr/include
+-I/home/pawelburzynski/anaconda3/include/qt
+-I/home/pawelburzynski/anaconda3/include/qt/QtWidgets
+-I/home/pawelburzynski/anaconda3/include/qt/QtGui
+-I/home/pawelburzynski/anaconda3/include/qt/QtCore
+-I/home/pawelburzynski/anaconda3/./mkspecs/linux-g++
+-o
+/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWidget.cpp
+/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/ViewWidget.h
