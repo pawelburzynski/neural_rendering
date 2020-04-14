@@ -136,7 +136,7 @@ void SimpleRenderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QSt
     int dataPoints = 0;
     bool foundData = false;
 
-    // Find number of training images and metadata
+    // Find number of images and metadata
     for (int i = 0; i < files.size(); i++) {
         QFileInfo f(files[i]);
         if (f.suffix() == "png") {
@@ -177,23 +177,21 @@ void SimpleRenderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QSt
     }
 
     if (dataPoints < 1) {
-        qCritical("ERROR: No training images!");
+        qCritical("ERROR: No images!");
         std::abort();
     }
 
         if (!foundData) {
-        qCritical("ERROR: No training metadata!");
+        qCritical("ERROR: No metadata!");
         std::abort();
     }
 
-    qDebug() << "Founded " << dataPoints << "training images!";
-
-    //prepare training and evaluation set
+    qDebug() << "Founded " << dataPoints << "images!";
 
     for(int i = 0; i < dataPoints; i++) {
         QFileInfo f(files[i]);
         if (f.suffix() == "png") {
-            training_data.append(files[i]);
+            data_files->append(files[i]);
         }
     }
     for(int i = 4*dataPoints/5; i < dataPoints; i++ ) {
@@ -205,7 +203,7 @@ void SimpleRenderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QSt
 
 }
 
-// Read training data
+// Read data
 void SimpleRenderer::readData(const char *data_dir)
 {
     K_pos = QVector3D(0.f,0.f,0.f);
