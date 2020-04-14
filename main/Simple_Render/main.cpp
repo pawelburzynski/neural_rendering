@@ -91,16 +91,16 @@ int main(int argc, char *argv[])
     fmt.setSamples(4);
     QSurfaceFormat::setDefaultFormat(fmt);
 
-    QString training_dir = "../Data/checkboard_plane";
+    QString data_dir = "../Data/checkboard_plane";
     QString output_dir = "../Output/checkboard_plane";
     const QStringList args = parser.positionalArguments();
     if( args.length()>0 )
-        training_dir = args[0];
+        data_dir = args[0];
     if( args.length()>1 )
         output_dir = args[1];
     ViewerWindow window;
     window.show();
-    window.loadTrainingData(training_dir);
-    window.generateEvaluationOutput(training_dir, output_dir);
+    window.loadTrainingData(data_dir);
+    window.generateEvaluationOutput(data_dir, output_dir);
     return app.exec();
 }

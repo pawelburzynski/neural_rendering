@@ -34,3 +34,17 @@
 8461	8999	1586801576563527618	Simple_Render/simple_render	23fa3f1fa3b3c8e9
 2	8324	1586801623586115931	Simple_Render/CMakeFiles/simple_render.dir/SimpleRenderer.cpp.o	4b8ed0466e9f5c7c
 8324	8862	1586801624130099674	Simple_Render/simple_render	23fa3f1fa3b3c8e9
+3	1993	1586833641293784556	Simple_Render/CMakeFiles/simple_render.dir/ViewWidget.cpp.o	252eb2d9d4064410
+3	2170	1586833641473779308	Simple_Render/CMakeFiles/simple_render.dir/ViewWindow.cpp.o	f2c21c9482dbf614
+3	2414	1586833641713772311	Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWidget.cpp.o	5817810f02f4602a
+3	2647	1586833641949765431	Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWindow.cpp.o	ea9d0d756133575e
+3	2654	1586833641957765198	Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o	44e60a2ccb488048
+3	9598	1586833648893562978	Simple_Render/CMakeFiles/simple_render.dir/SimpleRenderer.cpp.o	4b8ed0466e9f5c7c
+9598	10135	1586833649433547236	Simple_Render/simple_render	23fa3f1fa3b3c8e9
+2	1818	1586834845134718974	Simple_Render/CMakeFiles/simple_render.dir/ViewWidget.cpp.o	252eb2d9d4064410
+2	1989	1586834845314713733	Simple_Render/CMakeFiles/simple_render.dir/ViewWindow.cpp.o	f2c21c9482dbf614
+2	2404	1586834845726701739	Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWidget.cpp.o	5817810f02f4602a
+2	2509	1586834845834698594	Simple_Render/CMakeFiles/simple_render.dir/moc_ViewWindow.cpp.o	ea9d0d756133575e
+2	2552	1586834845874697430	Simple_Render/CMakeFiles/simple_render.dir/main.cpp.o	44e60a2ccb488048
+2	9296	1586834852614501201	Simple_Render/CMakeFiles/simple_render.dir/SimpleRenderer.cpp.o	4b8ed0466e9f5c7c
+9296	9840	1586834853162485247	Simple_Render/simple_render	23fa3f1fa3b3c8e9

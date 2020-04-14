@@ -48,14 +48,14 @@ double dist(QVector4D p1, QVector4D p2) {
 
 
 SimpleRenderer::SimpleRenderer() :
-	viewWidth(0), viewHeight(0), dataPoints(0)
+	viewWidth(0), viewHeight(0), training_dataPoints(0)
 {
     initOpenCL();
 }
 
 void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize)
 {
-    if( dataPoints == 0 ) // No data available
+    if( training_dataPoints == 0 ) // No data available
         return;
 
     unsigned char* data = NULL;
@@ -64,14 +64,14 @@ void SimpleRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, c
      
         std::vector<std::pair<double, int>> cams;
         for (int j = 0; j < training_dataPoints; j++) {
-            QFileInfo f2(evaluation_data[j]);
+            QFileInfo f2(eval_data[j]);
             bool flag2;
             int camera_index2 = f2.baseName().toInt(&flag2)-1;
             if(!flag2) {
                 qCritical("ERROR: Incorrect image name!");
                 std::abort(); 
             }
-            QVector4D &w_cam_j = w_cam[camera_index2];
+            QVector4D &w_cam_j = w_cam_training[camera_index2];
             cams.push_back(std::make_pair(dist(w_cam_j,K_pos.toVector4D()),j));
         }
         sort(cams.begin(), cams.end());
@@ -117,7 +117,7 @@ void SimpleRenderer::prepareCamPosArr()
             qCritical("ERROR: Incorrect image name!");
             std::abort(); 
         }
-        QVector4D &w_cam_i = w_cam[camera_index];
+        QVector4D &w_cam_i = w_cam_training[camera_index];
         camPosArr[i*3+0] = (float)w_cam_i.x();
         camPosArr[i*3+1] = (float)w_cam_i.y();
         camPosArr[i*3+2] = (float)w_cam_i.z();
@@ -129,13 +129,11 @@ void SimpleRenderer::prepareCamPosArr()
 
     queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(training_dataPoints+1),camPosArr.data());
 }
-
-// Read training data
-void SimpleRenderer::readTrainingData(const char *training_dir)
-{
-
-    QStringList files = QDir(training_dir).entryList();
+void SimpleRenderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files) {
+    
+    QStringList files = QDir(dir).entryList();
     QString dataFile;
+    int dataPoints = 0;
     bool foundData = false;
 
     // Find number of training images and metadata
@@ -145,20 +143,19 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
             dataPoints ++;
         }
         if (f.suffix() == "txt") {
-            dataFile =  QString(training_dir) + "/" + files[i];
+            dataFile =  dir + "/" + files[i];
             foundData = true;
         }
     }
 
-    qDebug() << training_dir << endl;
+    qDebug() << dir << endl;
     QFile data(dataFile);
     if (!data.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical("ERROR: Could not open meta_data file!");
         std::abort();
     }
 
-    w_cam.resize(dataPoints);
-    K_pos = QVector3D(0.f,0.f,0.f);
+    w_cam->resize(dataPoints);
 
     while (!data.atEnd()) {
         // read the data file
@@ -172,7 +169,7 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
             y = args[2].toDouble();
             z = args[3].toDouble();
             K_pos = QVector3D(x,y,z);
-            w_cam[index-1] = QVector4D(x,y,z,1);
+            (*w_cam)[index-1] = QVector4D(x,y,z,1);
         } else {
             qCritical("ERROR: Invalid data line!");
             std::abort();
@@ -184,21 +181,16 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
         std::abort();
     }
 
-     if (!foundData) {
+        if (!foundData) {
         qCritical("ERROR: No training metadata!");
         std::abort();
     }
-    
+
     qDebug() << "Founded " << dataPoints << "training images!";
-    std::vector<uint8_t> imageData; 
-    imgWidth = -1;
-    imgHeight = -1;
-    
+
     //prepare training and evaluation set
 
-    std::random_shuffle(files.begin(), files.end());
-    
-    for(int i = 0; i < 4*dataPoints/5; i++) {
+    for(int i = 0; i < dataPoints; i++) {
         QFileInfo f(files[i]);
         if (f.suffix() == "png") {
             training_data.append(files[i]);
@@ -207,13 +199,25 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
     for(int i = 4*dataPoints/5; i < dataPoints; i++ ) {
         QFileInfo f(files[i]);
         if (f.suffix() == "png") {
-            evaluation_data.append(files[i]);
+            eval_data.append(files[i]);
         }
     }
+
+}
+
+// Read training data
+void SimpleRenderer::readData(const char *data_dir)
+{
+    K_pos = QVector3D(0.f,0.f,0.f);
+    readImages(QString(data_dir) + "/training",  &w_cam_training, &training_data);
+    readImages(QString(data_dir) + "/eval",  &w_cam_eval, &eval_data);
+
     training_dataPoints = training_data.size();
-    eval_dataPoints = evaluation_data.size();
+    eval_dataPoints = eval_data.size();
     training_data.sort();
-    evaluation_data.sort();
+    eval_data.sort();
+
+    std::vector<uint8_t> imageData; 
     
     // Now  get the training images
     for (int i = 0; i < training_data.size(); i++) {
@@ -225,7 +229,7 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                 qCritical("ERROR: Incorrect image name!");
                 std::abort(); 
             }
-            QImage img(QString(training_dir) + "/" + training_data[i]);
+            QImage img(QString(data_dir) + "/" + training_data[i]);
             if( imgWidth == -1 ) { // First image loaded
                 imgWidth = img.width();
                 imgHeight = img.height();
@@ -247,7 +251,7 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
                     }
                 }
             }
-            qDebug() << "loaded: " << camera_index << ", angle: " << angle(w_cam[camera_index]);
+            qDebug() << "loaded: " << camera_index << ", angle: " << angle(w_cam_training[camera_index]);
         }
     }
     qDebug() << "VCamera" << "at (" << K_pos.x() << ", " << K_pos.y() <<")";
@@ -281,23 +285,23 @@ void SimpleRenderer::readTrainingData(const char *training_dir)
 
 }
 
-void SimpleRenderer::generateEvaluationOutput(const char *training_dir, const char *output_dir) {
+void SimpleRenderer::generateEvaluationOutput(const char *data_dir) {
      for (int i = 0; i < eval_dataPoints; i++) {
-        QFileInfo f(evaluation_data[i]);
+        QFileInfo f(eval_data[i]);
         bool flag;
         int camera_index = f.baseName().toInt(&flag)-1;
         if(!flag) {
             qCritical("ERROR: Incorrect image name!");
             std::abort(); 
         }
-        QVector4D &w_cam_i = w_cam[camera_index];
+        QVector4D &w_cam_i = w_cam_eval[camera_index];
         
-        if( dataPoints == 0 ) // No data available
+        if( eval_dataPoints == 0 ) // No data available
         return;
 
         unsigned char* data = NULL;
         try {
-            QImage img_sample(QString(training_dir) + "/" +f.filePath());
+            QImage img_sample(QString(data_dir) + "/eval/" + f.filePath());
             updateViewSize( img_sample.width(), img_sample.height() );
             qDebug() << "Evaluation output #" << i;
             
@@ -310,7 +314,7 @@ void SimpleRenderer::generateEvaluationOutput(const char *training_dir, const ch
                     qCritical("ERROR: Incorrect image name!");
                     std::abort(); 
                 }
-                QVector4D &w_cam_j = w_cam[camera_index2];
+                QVector4D &w_cam_j = w_cam_training[camera_index2];
                 cams.push_back(std::make_pair(dist(w_cam_j,w_cam_i),j));
             }
             sort(cams.begin(), cams.end());
@@ -338,8 +342,8 @@ void SimpleRenderer::generateEvaluationOutput(const char *training_dir, const ch
 
             // write to a file
             QImage img(data, viewWidth, viewHeight, QImage::Format_RGBA8888);
-            const QString &fileName_out = output_dir + QString::number(i)+"_out.png";
-            const QString &fileName_sample = output_dir + QString::number(i)+"sample.png";
+            const QString &fileName_out = QString(data_dir) + "/eval/" + QString::number(i)+"out.png";
+            const QString &fileName_sample = QString(data_dir) + "/eval/" + QString::number(i)+"sample.png";
             img.save(fileName_out, "PNG");
             img_sample.save(fileName_sample, "PNG");
         } catch(cl::Error err) {

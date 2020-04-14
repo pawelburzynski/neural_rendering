@@ -120,12 +120,12 @@ void ViewerWindow::fovUpdated(double fov)
 	focalLengthLabel->setText(label);
 }
 
-void ViewerWindow::loadTrainingData(QString training_dir)
+void ViewerWindow::loadTrainingData(QString data_dir)
 {
-	simpleRenderer.readTrainingData(training_dir.toLocal8Bit());
+	simpleRenderer.readData(data_dir.toLocal8Bit());
 }
 
-void ViewerWindow::generateEvaluationOutput(QString training_dir, QString output_dir) 
+void ViewerWindow::generateEvaluationOutput(QString data_dir, QString output_dir) 
 {
-	simpleRenderer.generateEvaluationOutput(training_dir.toLocal8Bit(), output_dir.toLocal8Bit());
+	simpleRenderer.generateEvaluationOutput(data_dir.toLocal8Bit());
 }
