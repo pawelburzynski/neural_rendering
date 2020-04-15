@@ -127,5 +127,5 @@ void ViewerWindow::loadTrainingData(QString data_dir)
 
 void ViewerWindow::generateEvaluationOutput(QString data_dir, QString output_dir) 
 {
-	simpleRenderer.generateEvaluationOutput(data_dir.toLocal8Bit());
+	simpleRenderer.generateEvaluationOutput(data_dir.toLocal8Bit(), output_dir.toLocal8Bit());
 }

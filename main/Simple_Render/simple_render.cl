@@ -29,7 +29,7 @@ __kernel void simple_render(__read_only image3d_t trainingCamImages, // 3D Image
         float weighti =  gaus(d);
         float4 color4  =  read_imagef(trainingCamImages, samp, (float4)(width+0.5, height+0.5, closestCam[i]+0.5, 0));
         float3 colori = display_decode((float3)(color4.x, color4.y, color4.z));
-        if (get_global_id(0) == 100 && get_global_id(1) == 100 && i==4) {
+        if (get_global_id(0) == 100 && get_global_id(1) == 100 && i==0) {
             printf("p1: %lf %lf %lf %lf\n", p1.x, p1.y, p1.z, p1.w);
             printf("p2: %lf %lf %lf %lf\n", p2.x, p2.y, p2.z, p2.w);
             printf("d: %lf\n", d);

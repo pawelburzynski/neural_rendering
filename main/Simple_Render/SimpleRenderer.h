@@ -19,7 +19,7 @@ public:
 public:
     void paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize);
     void readData(const char *data_dir);
-    void generateEvaluationOutput(const char *data_dir);
+    void generateEvaluationOutput(const char *data_dir, const char* output_dir);
 
     float focus = 500.0f;
     float apertureSize = 8.0f;
@@ -51,7 +51,7 @@ private:
     int training_dataPoints = 0;
     int eval_dataPoints = 0;
     int debug = 0;
-    const int number_closest_points = 25;
+    const int number_closest_points = 10;
 
     // Input data
     void readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files);
