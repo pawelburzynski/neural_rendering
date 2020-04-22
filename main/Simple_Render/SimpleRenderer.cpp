@@ -12,7 +12,7 @@
 
 extern const char *getOCLErrorString(cl_int error);
 
-SimpleRenderer::SimpleRenderer() : Renderer23()
+SimpleRenderer::SimpleRenderer() : Renderer("simple_renderer.cl","simple_renderer")
 {
 }
 

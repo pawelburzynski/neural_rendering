@@ -7,13 +7,13 @@
 #include <QWidget>
 #include <QVector3D>
 #include <QMatrix4x4>
-#include "Renderer23.h"
+#include "Renderer.h"
 
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
 
-class SimpleRenderer : public Renderer23
+class SimpleRenderer : public Renderer
 {
 public:
     SimpleRenderer();

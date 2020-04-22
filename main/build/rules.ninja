@@ -41,7 +41,7 @@ rule CXX_EXECUTABLE_LINKER__list_platforms
 #############################################
 # Rule for compiling CXX files.
 
-rule CXX_COMPILER__simple_render
+rule CXX_COMPILER__simple_renderer
   depfile = $DEP_FILE
   deps = gcc
   command = /usr/bin/g++-7  $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -51,7 +51,7 @@ rule CXX_COMPILER__simple_render
 #############################################
 # Rule for linking CXX executable.
 
-rule CXX_EXECUTABLE_LINKER__simple_render
+rule CXX_EXECUTABLE_LINKER__simple_renderer
   command = $PRE_LINK && /usr/bin/g++-7  $FLAGS  $LINK_FLAGS $in  -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking CXX executable $TARGET_FILE
   restat = $RESTAT
