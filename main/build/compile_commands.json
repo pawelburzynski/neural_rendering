@@ -7,43 +7,49 @@
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_renderer.dir/main.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/main.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/main.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/main.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/main.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/main.cpp"
 },
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_renderer.dir/ViewWindow.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/ViewWindow.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/ViewWindow.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewWindow.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/ViewWindow.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/ViewWindow.cpp"
 },
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_renderer.dir/ViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/ViewWidget.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/ViewWidget.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/ViewWidget.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/ViewWidget.cpp"
 },
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_renderer.dir/SimpleRenderer.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/SimpleRenderer.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/SimpleRenderer.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/ProjectionRenderer.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/ProjectionRenderer.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/ProjectionRenderer.cpp"
 },
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_renderer.dir/Renderer.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/Renderer.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Render/Renderer.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/SimpleRenderer.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/SimpleRenderer.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/SimpleRenderer.cpp"
 },
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_renderer.dir/moc_ViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWidget.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWidget.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/Renderer.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/Renderer.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/Simple_Renderer/Renderer.cpp"
 },
 
 {
   "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
-  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Render/CMakeFiles/simple_renderer.dir/moc_ViewWindow.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWindow.cpp\"",
-  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Render/moc_ViewWindow.cpp"
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/moc_ViewWidget.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Renderer/moc_ViewWidget.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Renderer/moc_ViewWidget.cpp"
+},
+
+{
+  "directory": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build",
+  "command": "/usr/bin/g++-7  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++  -g   -fPIC -std=gnu++11 -o Simple_Renderer/CMakeFiles/simple_renderer.dir/moc_ViewWindow.cpp.o -c \"/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Renderer/moc_ViewWindow.cpp\"",
+  "file": "/home/pawelburzynski/Cambridge/PartII project/neural_rendering/main/build/Simple_Renderer/moc_ViewWindow.cpp"
 }
 ]

@@ -16,4 +16,4 @@ endif(NOT Qt5Widgets_FOUND)
 include_directories ("${PROJECT_SOURCE_DIR}/../include" ${OpenCL_INCLUDE_DIRS})
 
 add_subdirectory (Check) 
-add_subdirectory (Simple_Render)
+add_subdirectory (Simple_Renderer)

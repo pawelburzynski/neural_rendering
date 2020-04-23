@@ -26,13 +26,13 @@
         },
        
         {
-            "name": "Simple_Render",
+            "name": "Simple_Renderer",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/Simple_Render/simple_render",
+            "program": "${workspaceFolder}/build/Simple_Renderer/simple_renderer",
             "args": ["${workspaceFolder}/Data/marble1", "${workspaceFolder}/Output"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/Simple_Render",
+            "cwd": "${workspaceFolder}/Simple_Renderer",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
