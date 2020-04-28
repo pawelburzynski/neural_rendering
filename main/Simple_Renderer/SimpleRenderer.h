@@ -26,7 +26,6 @@ private:
    void init();
 
     //renderer data
-    std::vector<QMatrix4x4> Vi;
     const int number_closest_points = 10;
     std::vector<int> closestCamArr;
     cl::Buffer closestCam;

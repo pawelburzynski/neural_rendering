@@ -71,6 +71,10 @@ protected:
     std::vector<float> camPosArr;
     cl::Buffer curPos;
     cl::Buffer camPos;      // World coordindates of each camera
+
+    //Matrix data
+    std::vector<float> proMatTrain; // Projection Matrices for all training data
+    cl::Buffer projectionMats;   //  Buffer for projection Matrices
    
 };
 

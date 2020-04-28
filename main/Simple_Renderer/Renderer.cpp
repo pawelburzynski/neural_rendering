@@ -66,6 +66,7 @@ void Renderer::prepareCamPosArr()
 
     queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(training_dataPoints+1),camPosArr.data());
 }
+
 void Renderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files) {
     
     QStringList files = QDir(dir).entryList();
@@ -93,11 +94,12 @@ void Renderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringLi
     }
 
     w_cam->resize(dataPoints);
-
+    proMatTrain.resize(16*dataPoints);
     while (!data.atEnd()) {
         // read the data file
         QString line = data.readLine();
         int index;
+        // read 3D coordinates of camera
         double x,y,z;
         QStringList args = line.split(',');
         if (args.size() == 4 && index < dataPoints) {
@@ -110,6 +112,21 @@ void Renderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringLi
         } else {
             qCritical("ERROR: Invalid data line!");
             std::abort();
+        }
+         // read 3x4 projection matrix for the camera
+        QMatrix4x4 proMatrix;
+        for(int i=0; i<3; i++) {
+             QStringList args = line.split(',');
+            if (args.size() == 4 && index < dataPoints) {
+                QVector4D row(args[0].toDouble(),args[1].toDouble(),args[2].toDouble(),args[3].toDouble());
+                proMatrix.setRow(i,row);
+            } else {
+                qCritical("ERROR: Invalid data line!");
+                std::abort();
+            }
+        }
+        for(int k=0;k<16;k++){
+            proMatTrain[16*(index-1)+k] = *(proMatrix.data()+k);
         }
     }
 
