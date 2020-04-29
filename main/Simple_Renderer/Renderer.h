@@ -61,7 +61,7 @@ protected:
     int debug = 0;
  
     // Input data
-    void readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files);
+    void readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files, std::vector<QMatrix4x4>* pro_mat);
     QStringList training_data;
     QStringList eval_data;
     
@@ -73,6 +73,8 @@ protected:
     cl::Buffer camPos;      // World coordindates of each camera
 
     //Matrix data
+    std::vector<QMatrix4x4> pro_Mat_Train; // 4x4 projection matrix for Training Data
+    std::vector<QMatrix4x4> pro_Mat_Eval;  // 4x4 projection matrix for Evaluation Data
     std::vector<float> proMatTrain; // Projection Matrices for all training data
     cl::Buffer projectionMats;   //  Buffer for projection Matrices
 };

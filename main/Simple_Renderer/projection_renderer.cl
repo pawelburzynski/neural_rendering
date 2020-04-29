@@ -15,7 +15,8 @@ __kernel void projection_renderer(__read_only image3d_t trainingCamImages,  // 3
                         __constant float *CurPos,                       // curent camera position
                         __constant int *closestCam,                     // precomputed list of closest camera positions
                         int num_datapoints,                             // number of data points
-                        __constant float *proMat)                       // 3x4 projection matrices for all training camera inputs
+                        __constant float *proMat,                       // 3x4 projection matrices for all training camera inputs
+                        __constant float *invProMatCam)                 // inverse projection camera matrix of current camera  
 {
     float width = (float)(get_global_id(0));
     float height = (float)(get_global_id(1));

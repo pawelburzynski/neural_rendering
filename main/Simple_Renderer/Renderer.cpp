@@ -67,7 +67,8 @@ void Renderer::prepareCamPosArr()
     queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(training_dataPoints+1),camPosArr.data());
 }
 
-void Renderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files) {
+// parse metadata file
+void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files, std::vector<QMatrix4x4>* pro_mat) {
     
     QStringList files = QDir(dir).entryList();
     QString dataFile;
@@ -94,7 +95,7 @@ void Renderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringLi
     }
 
     w_cam->resize(dataPoints);
-    proMatTrain.resize(16*dataPoints);
+    pro_mat->resize(dataPoints);
     while (!data.atEnd()) {
         // read the data file
         QString line = data.readLine();
@@ -128,9 +129,11 @@ void Renderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringLi
                 std::abort();
             }
         }
-        for(int k=0;k<16;k++){
-            proMatTrain[16*(index-1)+k] = *(proMatrix.data()+k);
-        }
+        QVector4D row(x,y,z,0);
+        row.normalize();
+        proMatrix.setRow(3,row);
+        (*pro_mat)[index-1] = proMatrix;
+        qDebug() << proMatrix;
     }
 
     if (dataPoints < 1) {
@@ -157,13 +160,20 @@ void Renderer::readImages(QString dir,  std::vector<QVector4D>* w_cam, QStringLi
 void Renderer::readData(const char *data_dir)
 {
     K_pos = QVector3D(0.f,0.f,0.f);
-    readImages(QString(data_dir) + "/training",  &w_cam_training, &training_data);
-    readImages(QString(data_dir) + "/eval",  &w_cam_eval, &eval_data);
+    readMetaData(QString(data_dir) + "/training",  &w_cam_training, &training_data, &pro_Mat_Train);
+    readMetaData(QString(data_dir) + "/eval",  &w_cam_eval, &eval_data, &pro_Mat_Eval);
 
     training_dataPoints = training_data.size();
     eval_dataPoints = eval_data.size();
     training_data.sort();
     eval_data.sort();
+
+    proMatTrain.resize(16*training_dataPoints);
+    for(int index = 0; index < training_dataPoints; index++) {
+        for(int k = 0; k < 16; k++){
+            proMatTrain[16*index+k] = *(pro_Mat_Train[index].data()+k);
+        }
+    }
 
     std::vector<uint8_t> imageData; 
     qDebug() << training_data.size() << endl;

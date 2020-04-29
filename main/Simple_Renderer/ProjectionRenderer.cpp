@@ -33,6 +33,16 @@ void ProjectionRenderer::init()
     }
 }
 
+QMatrix4x4 getInverseProjectioMatrix(QVector3D eye, QVector3D center, QVector3D up)
+{
+	QMatrix4x4 la;
+	la.lookAt(eye, center, up);
+	QMatrix4x4 inv;
+	inv(0, 0) = -1;
+	inv(2, 2) = -1;
+	return inv*la;
+}
+
 void ProjectionRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize)
 {
     if( training_dataPoints == 0 ) // No data available
