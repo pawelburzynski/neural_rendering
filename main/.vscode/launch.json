@@ -30,7 +30,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/Simple_Renderer/simple_renderer",
-            "args": ["${workspaceFolder}/Data/marble1", "${workspaceFolder}/Output"],
+            "args": ["${workspaceFolder}/Data/chair", "${workspaceFolder}/Output"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/Simple_Renderer",
             "environment": [],

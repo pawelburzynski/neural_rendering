@@ -168,10 +168,10 @@ void Renderer::readData(const char *data_dir)
     training_data.sort();
     eval_data.sort();
 
-    proMatTrain.resize(16*training_dataPoints);
+    pro_Mat_TrainVec.resize(16*training_dataPoints);
     for(int index = 0; index < training_dataPoints; index++) {
         for(int k = 0; k < 16; k++){
-            proMatTrain[16*index+k] = *(pro_Mat_Train[index].data()+k);
+            pro_Mat_TrainVec[16*index+k] = *(pro_Mat_Train[index].data()+k);
         }
     }
 
@@ -228,7 +228,7 @@ void Renderer::readData(const char *data_dir)
                       imageData.data());
         camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
         curPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*4);
-        projectionMats = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16*training_dataPoints,w_cam_training.data());
+        projectionMats = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16*training_dataPoints,pro_Mat_TrainVec.data());
 		
         prepareCamPosArr();
         kernel.setArg(0,renderData);
@@ -261,7 +261,6 @@ void Renderer::updateViewSize(int newWidth, int newHeight)
                 
     kernel.setArg(1,vcamImage);
 }
-
 
 // Initialize OpenCL resources
 void Renderer::initOpenCL()

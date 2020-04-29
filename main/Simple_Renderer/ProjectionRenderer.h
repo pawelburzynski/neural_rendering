@@ -29,6 +29,8 @@ private:
     const int number_closest_points = 10;
     std::vector<int> closestCamArr;
     cl::Buffer closestCam;
+    std::vector<float> inv_Pro_Mat_Cam_Vec; // Inverted Camera Projection matrix
+    cl::Buffer invProMatCam;   //  Buffer for Inverted Camera Projection matrix
 
 };
 

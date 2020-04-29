@@ -75,7 +75,7 @@ protected:
     //Matrix data
     std::vector<QMatrix4x4> pro_Mat_Train; // 4x4 projection matrix for Training Data
     std::vector<QMatrix4x4> pro_Mat_Eval;  // 4x4 projection matrix for Evaluation Data
-    std::vector<float> proMatTrain; // Projection Matrices for all training data
+    std::vector<float> pro_Mat_TrainVec; // Projection Matrices for all training data
     cl::Buffer projectionMats;   //  Buffer for projection Matrices
 };
 

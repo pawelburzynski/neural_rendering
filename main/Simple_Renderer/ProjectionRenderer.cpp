@@ -23,24 +23,16 @@ void ProjectionRenderer::init()
     {
         qDebug() << "PROJECTION RENDERER" << endl;
         closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*number_closest_points);
+        invProMatCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16);
         kernel.setArg(4,closestCam);
         kernel.setArg(5,number_closest_points);
         kernel.setArg(6,projectionMats);
+        kernel.setArg(7,invProMatCam);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
         exit(1);
     }
-}
-
-QMatrix4x4 getInverseProjectioMatrix(QVector3D eye, QVector3D center, QVector3D up)
-{
-	QMatrix4x4 la;
-	la.lookAt(eye, center, up);
-	QMatrix4x4 inv;
-	inv(0, 0) = -1;
-	inv(2, 2) = -1;
-	return inv*la;
 }
 
 void ProjectionRenderer::paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize)
@@ -96,8 +88,8 @@ void ProjectionRenderer::paint(QPainter *painter, QPaintEvent *event, int elapse
 }
 
 void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const char* output_dir) {
-     for (int i = 0; i < eval_dataPoints; i++) {
-        QFileInfo f(eval_data[i]);
+     for (int index = 0; index < eval_dataPoints; index++) {
+        QFileInfo f(eval_data[index]);
         bool flag;
         int camera_index = f.baseName().toInt(&flag)-1;
         if(!flag) {
@@ -112,7 +104,7 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
         try {
             QImage img_sample(QString(data_dir) + "/eval/" + f.filePath());
             updateViewSize( img_sample.width(), img_sample.height() );
-            qDebug() << "Evaluation output #" << i+1;
+            qDebug() << "Evaluation output #" << index+1;
             
             std::vector<std::pair<double, int>> cams;
             for (int j = 0; j < training_dataPoints; j++) {
@@ -137,8 +129,16 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
             curPosArr[1] = (w_cam_i.y());
             curPosArr[2] = (w_cam_i.z());
             curPosArr[3] = (w_cam_i.w());
+
+            inv_Pro_Mat_Cam_Vec.resize(16);
+            QMatrix4x4 inv_pro_Mat = pro_Mat_Eval[index].inverted();
+            for(int k = 0; k < 16; k++){
+                inv_Pro_Mat_Cam_Vec[k] = *(inv_pro_Mat.data()+k);
+            }
+
             queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
             queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
+            queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, inv_Pro_Mat_Cam_Vec.data());
             queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
             // Read Image back and display
             data = new unsigned char[viewWidth*viewHeight*4];
@@ -151,8 +151,8 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
 
             // write to a file
             QImage img(data, viewWidth, viewHeight, QImage::Format_RGBA8888);
-            const QString &fileName_out = QString(output_dir) + "/projection/" + QString::number(i+1)+"out.png";
-            const QString &fileName_sample = QString(output_dir) + "/projection/" + QString::number(i+1)+"sample.png";
+            const QString &fileName_out = QString(output_dir) + "/projection/" + QString::number(index+1)+"out.png";
+            const QString &fileName_sample = QString(output_dir) + "/projection/" + QString::number(index+1)+"sample.png";
             img.save(fileName_out, "PNG");
             img_sample.save(fileName_sample, "PNG");
         } catch(cl::Error err) {
