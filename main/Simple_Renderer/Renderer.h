@@ -75,7 +75,6 @@ protected:
     //Matrix data
     std::vector<float> proMatTrain; // Projection Matrices for all training data
     cl::Buffer projectionMats;   //  Buffer for projection Matrices
-   
 };
 
 

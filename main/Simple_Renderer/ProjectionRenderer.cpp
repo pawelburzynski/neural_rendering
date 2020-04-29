@@ -12,7 +12,7 @@
 
 extern const char *getOCLErrorString(cl_int error);
 
-ProjectionRenderer::ProjectionRenderer() : Renderer("simple_renderer.cl","simple_renderer")
+ProjectionRenderer::ProjectionRenderer() : Renderer("projection_renderer.cl","projection_renderer")
 {
     init();
 }
@@ -25,6 +25,7 @@ void ProjectionRenderer::init()
         closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*number_closest_points);
         kernel.setArg(4,closestCam);
         kernel.setArg(5,number_closest_points);
+        kernel.setArg(6,projectionMats);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
@@ -140,8 +141,8 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
 
             // write to a file
             QImage img(data, viewWidth, viewHeight, QImage::Format_RGBA8888);
-            const QString &fileName_out = QString(output_dir) + "/simple_mean/" + QString::number(i+1)+"out.png";
-            const QString &fileName_sample = QString(output_dir) + "/simple_mean/" + QString::number(i+1)+"sample.png";
+            const QString &fileName_out = QString(output_dir) + "/projection/" + QString::number(i+1)+"out.png";
+            const QString &fileName_sample = QString(output_dir) + "/projection/" + QString::number(i+1)+"sample.png";
             img.save(fileName_out, "PNG");
             img_sample.save(fileName_sample, "PNG");
         } catch(cl::Error err) {

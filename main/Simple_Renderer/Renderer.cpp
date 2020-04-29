@@ -218,8 +218,9 @@ void Renderer::readData(const char *data_dir)
                       imageData.data());
         camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
         curPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*4);
-
-		prepareCamPosArr();
+        projectionMats = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16*training_dataPoints,w_cam_training.data());
+		
+        prepareCamPosArr();
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);
         kernel.setArg(3,curPos);
@@ -302,6 +303,5 @@ void Renderer::initOpenCL()
 		std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
 		exit(1);
 	}
-
 }
 
