@@ -103,7 +103,7 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QString
         // read 3D coordinates of camera
         double x,y,z;
         QStringList args = line.split(',');
-        if (args.size() == 4 && index <= dataPoints) {
+        if (args.size() == 4 && args[0].toInt() <= dataPoints) {
             index = args[0].toInt();
             x = args[1].toDouble();
             y = args[2].toDouble();
@@ -111,6 +111,7 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QString
             K_pos = QVector3D(x,y,z);
             (*w_cam)[index-1] = QVector4D(x,y,z,1);
         } else {
+            qDebug() << args.size();
             qDebug() << line;
             qCritical("ERROR: Invalid data line!");
             std::abort();
@@ -120,7 +121,7 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QString
         for(int i=0; i<3; i++) {
             line = data.readLine();
             args = line.split(',');
-            if (args.size() == 4 && index <= dataPoints) {
+            if (args.size() == 4) {
                 QVector4D row(args[0].toDouble(),args[1].toDouble(),args[2].toDouble(),args[3].toDouble());
                 proMatrix.setRow(i,row);
             } else {
@@ -133,7 +134,6 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QString
         row.normalize();
         proMatrix.setRow(3,row);
         (*pro_mat)[index-1] = proMatrix;
-        qDebug() << proMatrix;
     }
 
     if (dataPoints < 1) {

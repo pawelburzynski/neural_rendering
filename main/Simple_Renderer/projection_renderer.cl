@@ -23,6 +23,14 @@ __kernel void projection_renderer(__read_only image3d_t trainingCamImages,  // 3
     float3 color = (float3)0.f;
     float weight = 0;
     float4 p1 = (float4)(CurPos[0], CurPos[1], CurPos[2], 1);
+    if(width == 100 && height == 100) {
+        for(int k=0; k<16; k++) {
+            printf("%lf ", invProMatCam[k]);
+            if((k+1)%4 == 0) {
+                printf("\n");
+            }
+        }
+    }
     for (int i=0; i<num_datapoints; i++) {
         float4 p2 = (float4)(CiPos[closestCam[i]*3+0], CiPos[closestCam[i]*3+1], CiPos[closestCam[i]*3+2], 1);
         float d = dist(p1, p2);
