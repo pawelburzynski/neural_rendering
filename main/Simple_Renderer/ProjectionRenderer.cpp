@@ -131,7 +131,7 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
             curPosArr[3] = (w_cam_i.w());
 
             inv_Pro_Mat_Cam_Vec.resize(16);
-            QMatrix4x4 inv_pro_Mat = pro_Mat_Eval[index].inverted();
+            QMatrix4x4 inv_pro_Mat = pro_Mat_Eval[camera_index].inverted().transposed();
             for(int k = 0; k < 16; k++){
                 inv_Pro_Mat_Cam_Vec[k] = *(inv_pro_Mat.data()+k);
             }
@@ -139,6 +139,7 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
             queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
             queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
             queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, inv_Pro_Mat_Cam_Vec.data());
+            queue.enqueueWriteBuffer(projectionMats,CL_TRUE,0,sizeof(float)*16*(training_dataPoints+1),pro_Mat_TrainVec.data());
             queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
             // Read Image back and display
             data = new unsigned char[viewWidth*viewHeight*4];

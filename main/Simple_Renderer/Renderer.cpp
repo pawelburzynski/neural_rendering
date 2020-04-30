@@ -130,8 +130,7 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QString
                 std::abort();
             }
         }
-        QVector4D row(x,y,z,0);
-        row.normalize();
+        QVector4D row(x,y,z,-(x+y+z));
         proMatrix.setRow(3,row);
         (*pro_mat)[index-1] = proMatrix;
     }
@@ -168,10 +167,10 @@ void Renderer::readData(const char *data_dir)
     training_data.sort();
     eval_data.sort();
 
-    pro_Mat_TrainVec.resize(16*training_dataPoints);
+    pro_Mat_TrainVec.resize(16*(training_dataPoints+1));
     for(int index = 0; index < training_dataPoints; index++) {
         for(int k = 0; k < 16; k++){
-            pro_Mat_TrainVec[16*index+k] = *(pro_Mat_Train[index].data()+k);
+            pro_Mat_TrainVec[16*index+k] = (float)*(pro_Mat_Train[index].data()+k);
         }
     }
 
@@ -228,8 +227,7 @@ void Renderer::readData(const char *data_dir)
                       imageData.data());
         camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
         curPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*4);
-        projectionMats = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16*training_dataPoints,pro_Mat_TrainVec.data());
-		
+        projectionMats = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*16*(training_dataPoints+1));
         prepareCamPosArr();
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);
