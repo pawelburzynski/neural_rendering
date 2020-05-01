@@ -16,7 +16,7 @@
 class ProjectionRenderer : public Renderer
 {
 public:
-    ProjectionRenderer();
+    ProjectionRenderer(QString data_dir);
 
 public:
     void paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize);

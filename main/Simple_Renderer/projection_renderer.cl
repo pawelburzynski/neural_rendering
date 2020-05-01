@@ -40,12 +40,11 @@ __kernel void projection_renderer(__read_only image3d_t trainingCamImages,  // 3
         float4 p2 = (float4)(CiPos[closestCam[i]*3+0], CiPos[closestCam[i]*3+1], CiPos[closestCam[i]*3+2], 1);
         float d = dist(cam_pos, p2);
         float weighti =  gaus(d);
-        //float4 pix_pos_i = mat_mul_g((__global float4*)(proMat+16*closestCam[i]),projection);
-        float4 const pix_pos_i = proMat[closestCam[i]];
-        //pix_pos_i/=pix_pos_i.z;
-        float4 color4  =  read_imagef(trainingCamImages, samp, (float4)(width+0.5, height+0.5, closestCam[i]+0.5, 0));
+        float4 pix_pos_i = mat_mul_g((__global float4*)(proMat+16*closestCam[i]),projection);
+        pix_pos_i/=pix_pos_i.z;
+        float4 color4  =  read_imagef(trainingCamImages, samp, (float4)(pix_pos_i.x+0.5, pix_pos_i.y+0.5, closestCam[i]+0.5, 0));
         float3 colori = display_decode((float3)(color4.x, color4.y, color4.z));
-        if (get_global_id(0) == 300 && get_global_id(1) == 600 && i==0) {
+        if (get_global_id(0) == 300 && get_global_id(1) == 100 && i==0) {
             printf("Closest camera: %d dist: %lf\n", closestCam[i], dist(cam_pos,p2));
             printf("cam_pos %lf %lf %lf\n", cam_pos.x, cam_pos.y, cam_pos.z);    
             printf("pix_pos_i %lf %lf %lf %lf\n", pix_pos_i.x, pix_pos_i.y, pix_pos_i.z, pix_pos_i.w);

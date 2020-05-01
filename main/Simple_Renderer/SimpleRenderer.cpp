@@ -12,8 +12,9 @@
 
 extern const char *getOCLErrorString(cl_int error);
 
-SimpleRenderer::SimpleRenderer() : Renderer("simple_renderer.cl","simple_renderer")
+SimpleRenderer::SimpleRenderer(QString data_dir) : Renderer("simple_renderer.cl","simple_renderer")
 {
+    readData(data_dir.toLocal8Bit());
     init();
 }
 

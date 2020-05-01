@@ -16,7 +16,7 @@
 class SimpleRenderer : public Renderer
 {
 public:
-    SimpleRenderer();
+    SimpleRenderer(QString data_dir);
 
 public:
     void paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize);

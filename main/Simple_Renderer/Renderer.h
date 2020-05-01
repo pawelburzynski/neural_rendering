@@ -61,9 +61,9 @@ protected:
     int debug = 0;
  
     // Input data
-    void readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files, std::vector<QMatrix4x4>* pro_mat);
-    QStringList training_data;
-    QStringList eval_data;
+    void readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::vector<QString>* data_files, std::vector<QMatrix4x4>* pro_mat);
+    std::vector<QString> training_data;
+    std::vector<QString> eval_data;
     
     // Training data
     std::vector<QVector4D> w_cam_training; // World coordindates of each camera

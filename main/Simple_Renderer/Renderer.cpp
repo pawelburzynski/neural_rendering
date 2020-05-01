@@ -42,6 +42,14 @@ Renderer::Renderer(const char* kernel_file_name, const char* kernel_program) :
     initOpenCL();
 }
 
+bool cmp(QString x, QString y) {
+    QFileInfo f1(x);
+    QFileInfo f2(y);
+    int x_v = f1.baseName().toInt();
+    int y_v = f2.baseName().toInt();
+    return x_v <= y_v;
+}
+
 void Renderer::prepareCamPosArr()
 {
     camPosArr.resize(3*(training_dataPoints+1));
@@ -68,7 +76,7 @@ void Renderer::prepareCamPosArr()
 }
 
 // parse metadata file
-void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QStringList* data_files, std::vector<QMatrix4x4>* pro_mat) {
+void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::vector<QString>* data_files, std::vector<QMatrix4x4>* pro_mat) {
     
     QStringList files = QDir(dir).entryList();
     QString dataFile;
@@ -150,7 +158,7 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, QString
     for(int i = 0; i < files.size(); i++) {
         QFileInfo f(files[i]);
         if (f.suffix() == "png") {
-            data_files->append(files[i]);
+            data_files->push_back(files[i]);
         }
     }
 }
@@ -164,13 +172,17 @@ void Renderer::readData(const char *data_dir)
 
     training_dataPoints = training_data.size();
     eval_dataPoints = eval_data.size();
-    training_data.sort();
-    eval_data.sort();
+    std::sort(training_data.begin(), training_data.end(),cmp);
+    std::sort(eval_data.begin(), eval_data.end(),cmp);
+    for(int i=0; i<eval_data.size(); i++) {
+        qDebug() << eval_data[i];
+    }
 
     pro_Mat_TrainVec.resize(16*(training_dataPoints+1));
     for(int index = 0; index < training_dataPoints; index++) {
+        QMatrix4x4 pro_Mat_Train_trans = pro_Mat_Train[index].transposed();
         for(int k = 0; k < 16; k++){
-            pro_Mat_TrainVec[16*index+k] = (float)*(pro_Mat_Train[index].data()+k);
+            pro_Mat_TrainVec[16*index+k] = (float)*(pro_Mat_Train_trans.data()+k);
         }
     }
 
@@ -228,6 +240,7 @@ void Renderer::readData(const char *data_dir)
         camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
         curPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*4);
         projectionMats = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*16*(training_dataPoints+1));
+        queue.enqueueWriteBuffer(projectionMats,CL_TRUE,0,sizeof(float)*16*(training_dataPoints+1),pro_Mat_TrainVec.data());
         prepareCamPosArr();
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);
@@ -311,4 +324,3 @@ void Renderer::initOpenCL()
 		exit(1);
 	}
 }
-

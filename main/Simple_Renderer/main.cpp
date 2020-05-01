@@ -36,10 +36,9 @@ int main(int argc, char *argv[])
     if( args.length() > 1 )
         output_dir = args[1];
     //renderer to use
-    ProjectionRenderer renderer;
+    ProjectionRenderer renderer(data_dir);
     ViewerWindow window(&renderer);
     window.show();
-    window.loadTrainingData(data_dir);
     window.generateEvaluationOutput(data_dir, output_dir);
     return app.exec();
 }

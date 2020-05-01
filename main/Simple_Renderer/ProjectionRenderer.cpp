@@ -12,8 +12,9 @@
 
 extern const char *getOCLErrorString(cl_int error);
 
-ProjectionRenderer::ProjectionRenderer() : Renderer("projection_renderer.cl","projection_renderer")
+ProjectionRenderer::ProjectionRenderer(QString data_dir) : Renderer("projection_renderer.cl","projection_renderer")
 {
+    readData(data_dir.toLocal8Bit());
     init();
 }
 
@@ -116,7 +117,7 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
                     std::abort(); 
                 }
                 QVector4D &w_cam_j = w_cam_training[camera_index2];
-                cams.push_back(std::make_pair(dist(w_cam_j,w_cam_i),j));
+                cams.push_back(std::make_pair(dist(w_cam_j,w_cam_i),camera_index2));
             }
             sort(cams.begin(), cams.end());
             closestCamArr.resize(number_closest_points);
@@ -139,7 +140,6 @@ void ProjectionRenderer::generateEvaluationOutput(const char *data_dir, const ch
             queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
             queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
             queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, inv_Pro_Mat_Cam_Vec.data());
-            queue.enqueueWriteBuffer(projectionMats,CL_TRUE,0,sizeof(float)*16*(training_dataPoints+1),pro_Mat_TrainVec.data());
             queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
             // Read Image back and display
             data = new unsigned char[viewWidth*viewHeight*4];
