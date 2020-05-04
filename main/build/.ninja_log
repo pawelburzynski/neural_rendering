@@ -14,3 +14,7 @@
 2	4763	1588301674052077641	Simple_Renderer/CMakeFiles/simple_renderer.dir/SimpleRenderer.cpp.o	61067254be0a7e1f
 2	8560	1588301856854718988	Simple_Renderer/CMakeFiles/simple_renderer.dir/Renderer.cpp.o	77b31b6dbb1beb10
 8560	9113	1588301857410702706	Simple_Renderer/simple_renderer	71e0e8a0511cbddc
+1	1937	1588530751526247552	Simple_Renderer/CMakeFiles/simple_renderer.dir/main.cpp.o	2c931a64d4ee7565
+1937	3890	1588530753478190797	Simple_Renderer/simple_renderer	71e0e8a0511cbddc
+2	1599	1588530982503531067	Simple_Renderer/CMakeFiles/simple_renderer.dir/main.cpp.o	2c931a64d4ee7565
+1599	2156	1588530983059514898	Simple_Renderer/simple_renderer	71e0e8a0511cbddc
