@@ -11,6 +11,19 @@
 #include "Renderer.h"
 #include "ocl_utils.hpp"
 
+QMatrix4x4 lookAtRH(QVector3D eye, QVector3D center, QVector3D up)
+{
+	QMatrix4x4 la;
+	la.lookAt(eye, center, up);
+	QMatrix4x4 inv;
+	inv(0, 0) = -1;
+	inv(2, 2) = -1;
+	return inv*la;
+}
+
+QMatrix4x4 getInvTransMat(QVector3D position, QVector3D center) {
+
+}
 
 double Renderer::angle(QVector4D pos) {
     double s = asin(pos.y() / sqrt(pos.x()*pos.x()+pos.y()*pos.y()));
