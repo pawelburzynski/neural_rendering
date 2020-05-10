@@ -21,44 +21,34 @@ QMatrix4x4 Renderer::lookAtRH(QVector3D eye, QVector3D center, QVector3D up)
 	return inv*la;
 }
 
-QMatrix4x4 Renderer::getInvTransMat(QVector3D position, QVector3D center) {
+QMatrix4x4 Renderer::getCurrInvTransMat() {
      // Intrinsic camera matrix of data camera
 	float proj_d = tan(camera_fov / 2.f * M_PI / 180.f);
-	QMatrix4x4 Kci (imgWidth/proj_d,  0.0f,           0.0f,  imgWidth/2.0f,
-                    0.0f,           -imgWidth/proj_d,  0.0f,  imgHeight/2.0f,
-                    0.0f,           0.0f,           1.0f,  0.0f,
-                    0.0f,           0.0f,           0.0f,  1.0f);
-
-	// Intrinsic camera matrix of the virtual camera
-	QMatrix4x4 KK(viewWidth/proj_d, 0.0f, 0.0f, viewWidth / 2.0f,
-		0.0f, -viewWidth/proj_d, 0.0f, viewHeight / 2.0f,
+	QMatrix4x4 K(viewWidth/proj_d, 0.0f, viewWidth / 2.0f, 0.0f,
+		0.0f, -viewWidth/proj_d, viewHeight / 2.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-
-
-    QVector3D N_F(0.f,0.f,1.f); // Normal of the focus plane
-    QVector3D w_F(0.f,0.f,focus); // Point of the focus plane
+		0.0f, 0.0f, 0.0f, 0.0f);
 
     // Projection matrix for cameras in the array
-	QMatrix4x4 Pc(1.0f,     0.0f,      0.0f,  0.0f,
+	QMatrix4x4 P(1.0f,     0.0f,      0.0f,  0.0f,
                     0.0f, 1.0f,      0.0f,  0.0f,
                     0.0f,     0.0f,  1.0f,  0.0f,
-                    0.0f,      0.0f,      1.0f,  0.0f);
-
-    QMatrix4x4 Vk;  // View matrix for the virtual camera K	
-	Vk = lookAtRH(K_pos, K_pos + QVector3D(0, 0, 1), QVector3D(0, 1, 0));
-
-
-	QMatrix4x4 PcK = Pc;
-    // Specifying focal plane in the virtual camera K coordinates
-	PcK.setRow(2, QVector4D(N_F.x(), N_F.y(), N_F.z(), -QVector3D::dotProduct(N_F, w_F)));
-
-	QMatrix4x4 transWK = KK * PcK * Vk;  // From World to Virtual camera K coordinates
-
-//	QVector4D w_Fh(100, -100, focus+100, 1);
-//	QVector4D k_test(100, 100, 0, 1);
-
-	QMatrix4x4 transKW = transWK.inverted();
+                    0.0f,      0.0f,      0.0f,  0.0f);
+    QVector3D up = QVector3D(0.0f, 0.0f, 1.0f); 
+    QVector3D cameraRight = QVector3D::crossProduct(up,K_pos);
+    QVector3D cameraUp = QVector3D::crossProduct(K_pos, cameraRight);
+    cameraUp.normalize();
+    QMatrix4x4 V;  // View matrix for the virtual camera K
+	V.lookAt(K_pos, K_pos - K_pos*0.1, cameraUp);
+    qDebug() << K;
+    qDebug() << P;
+    qDebug() << V;
+	QMatrix4x4 proMatrix = K * P * V;  // From World to Virtual camera K coordinates
+    QVector4D row(K_pos.x(),K_pos.y(),K_pos.z(),-(K_pos.x()+K_pos.y()+K_pos.z()));
+    proMatrix.setRow(3,row);
+	QMatrix4x4 invProMatrix = proMatrix.inverted();
+    qDebug() << proMatrix;
+    return invProMatrix;
 }
 
 double Renderer::angle(QVector4D pos) {

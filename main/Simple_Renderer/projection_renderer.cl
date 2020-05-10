@@ -54,7 +54,7 @@ __kernel void projection_renderer(__read_only image3d_t trainingCamImages,  // 3
         if (get_global_id(0) == 300 && get_global_id(1) == 100 && i==0) 
         {
             printf("cam_pos %lf %lf %lf\n", cam_pos.x, cam_pos.y, cam_pos.z);    
-            printf("pix_pos_i %lf %lf %lf %lf\n", pix_pos_i.x, pix_pos_i.y, pix_pos_i.z, pix_pos_i.w);
+            printf("pix_pos_i %lf %lf %lf %lf\n", pix_pos.x, pix_pos.y, pix_pos.z, pix_pos.w);
         }
         if(inside_view(pix_pos_i.x, pix_pos_i.y, get_image_width(trainingCamImages), get_image_height(trainingCamImages))) 
         {

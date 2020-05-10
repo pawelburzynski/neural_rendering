@@ -67,8 +67,16 @@ void ProjectionRenderer::paint(QPainter *painter, QPaintEvent *event, int elapse
         curPosArr.push_back(K_pos.y());
         curPosArr.push_back(K_pos.z());
         curPosArr.push_back(1);
+
+        inv_Pro_Mat_Cam_Vec.resize(16);
+        QMatrix4x4 inv_pro_Mat =  getCurrInvTransMat();
+        for(int k = 0; k < 16; k++){
+            inv_Pro_Mat_Cam_Vec[k] = *(inv_pro_Mat.data()+k);
+        }
+
         queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
         queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
+        queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, inv_Pro_Mat_Cam_Vec.data());
 		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
         // Read Image back and display
         data = new unsigned char[viewWidth*viewHeight*4];
@@ -79,7 +87,6 @@ void ProjectionRenderer::paint(QPainter *painter, QPaintEvent *event, int elapse
         queue.enqueueReadImage(vcamImage, CL_TRUE, origin, region, 0, 0 , data,  NULL, NULL);
         queue.finish();
 
-        // TODO, we should write to an OpenGL texture and draw it instead of coping data GPU->CPU
         QImage img(data, viewWidth, viewHeight, QImage::Format_RGBA8888);
         painter->drawImage(0, 0, img);        
     } catch(cl::Error err) {

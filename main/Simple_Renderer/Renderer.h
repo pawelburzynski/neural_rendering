@@ -33,7 +33,7 @@ public:
 protected:
     // utils
     QMatrix4x4 lookAtRH(QVector3D eye, QVector3D center, QVector3D up);
-    QMatrix4x4 getInvTransMat(QVector3D position, QVector3D center);
+    QMatrix4x4 getCurrInvTransMat();
     double angle(QVector4D pos);
     double angle(QVector3D pos);
     double dist(QVector4D p1, QVector4D p2);

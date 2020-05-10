@@ -34,5 +34,4 @@ private:
 
 };
 
-
 #endif // SimpleRenderer_H
