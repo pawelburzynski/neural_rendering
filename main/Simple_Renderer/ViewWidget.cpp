@@ -1,8 +1,7 @@
 #include "ViewWidget.h"
-#include "SimpleRenderer.h"
 #include <algorithm>
 #include <cmath>
-
+#include "Renderer.h"
 #include <QPainter>
 #include <QTimer>
 #include <QTime>

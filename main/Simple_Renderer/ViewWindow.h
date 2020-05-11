@@ -2,8 +2,7 @@
 #define WINDOW_H
 
 #include <QMainWindow>
-
-#include "SimpleRenderer.h"
+#include "Renderer.h"
 
 #include <QWidget>
 #include <QLabel>

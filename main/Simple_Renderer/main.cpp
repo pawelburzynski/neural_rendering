@@ -7,8 +7,8 @@
 #include <QVector3D>
 #include <QCommandLineParser>
 #include "ViewWindow.h"
-#include "SimpleRenderer.h"
-#include "ProjectionRenderer.h"
+#include "LightFieldInterpolation.h"
+#include "ViewDependentTextureMapping.h"
 
 int main(int argc, char *argv[])
 {
@@ -36,9 +36,9 @@ int main(int argc, char *argv[])
     if( args.length() > 1 )
         output_dir = args[1];
     //renderer to use
-    ProjectionRenderer renderer(data_dir);
+    LightFieldInterpolation renderer(data_dir);
     ViewerWindow window(&renderer);
     window.show();
-   // window.generateEvaluationOutput(data_dir, output_dir);
+    window.generateEvaluationOutput(data_dir, output_dir);
     return app.exec();
 }

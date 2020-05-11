@@ -39,15 +39,11 @@ QMatrix4x4 Renderer::getCurrInvTransMat() {
     QVector3D cameraUp = QVector3D::crossProduct(K_pos, cameraRight);
     cameraUp.normalize();
     QMatrix4x4 V;  // View matrix for the virtual camera K
-	V.lookAt(K_pos, K_pos - K_pos*0.1, cameraUp);
-    qDebug() << K;
-    qDebug() << P;
-    qDebug() << V;
+	V.lookAt(K_pos, QVector3D(0.0f, 0.0f, 0.0f), cameraUp);
 	QMatrix4x4 proMatrix = K * P * V;  // From World to Virtual camera K coordinates
     QVector4D row(K_pos.x(),K_pos.y(),K_pos.z(),-(K_pos.x()+K_pos.y()+K_pos.z()));
     proMatrix.setRow(3,row);
 	QMatrix4x4 invProMatrix = proMatrix.inverted();
-    qDebug() << proMatrix;
     return invProMatrix;
 }
 

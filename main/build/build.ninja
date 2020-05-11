@@ -147,16 +147,16 @@ build Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewWidget.cpp.o: CXX_COMPI
   INCLUDES = -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++
   OBJECT_DIR = Simple_Renderer/CMakeFiles/simple_renderer.dir
   OBJECT_FILE_DIR = Simple_Renderer/CMakeFiles/simple_renderer.dir
-build Simple_Renderer/CMakeFiles/simple_renderer.dir/ProjectionRenderer.cpp.o: CXX_COMPILER__simple_renderer ../Simple_Renderer/ProjectionRenderer.cpp || cmake_object_order_depends_target_simple_renderer
+build Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewDependentTextureMapping.cpp.o: CXX_COMPILER__simple_renderer ../Simple_Renderer/ViewDependentTextureMapping.cpp || cmake_object_order_depends_target_simple_renderer
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = Simple_Renderer/CMakeFiles/simple_renderer.dir/ProjectionRenderer.cpp.o.d
+  DEP_FILE = Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewDependentTextureMapping.cpp.o.d
   FLAGS = -g   -fPIC -std=gnu++11
   INCLUDES = -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++
   OBJECT_DIR = Simple_Renderer/CMakeFiles/simple_renderer.dir
   OBJECT_FILE_DIR = Simple_Renderer/CMakeFiles/simple_renderer.dir
-build Simple_Renderer/CMakeFiles/simple_renderer.dir/SimpleRenderer.cpp.o: CXX_COMPILER__simple_renderer ../Simple_Renderer/SimpleRenderer.cpp || cmake_object_order_depends_target_simple_renderer
+build Simple_Renderer/CMakeFiles/simple_renderer.dir/LightFieldInterpolation.cpp.o: CXX_COMPILER__simple_renderer ../Simple_Renderer/LightFieldInterpolation.cpp || cmake_object_order_depends_target_simple_renderer
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = Simple_Renderer/CMakeFiles/simple_renderer.dir/SimpleRenderer.cpp.o.d
+  DEP_FILE = Simple_Renderer/CMakeFiles/simple_renderer.dir/LightFieldInterpolation.cpp.o.d
   FLAGS = -g   -fPIC -std=gnu++11
   INCLUDES = -I../../include -I../include -isystem /home/pawelburzynski/anaconda3/include/qt -isystem /home/pawelburzynski/anaconda3/include/qt/QtWidgets -isystem /home/pawelburzynski/anaconda3/include/qt/QtGui -isystem /home/pawelburzynski/anaconda3/include/qt/QtCore -isystem /home/pawelburzynski/anaconda3/./mkspecs/linux-g++
   OBJECT_DIR = Simple_Renderer/CMakeFiles/simple_renderer.dir
@@ -190,7 +190,7 @@ build Simple_Renderer/CMakeFiles/simple_renderer.dir/moc_ViewWindow.cpp.o: CXX_C
 #############################################
 # Link the executable Simple_Renderer/simple_renderer
 
-build Simple_Renderer/simple_renderer: CXX_EXECUTABLE_LINKER__simple_renderer Simple_Renderer/CMakeFiles/simple_renderer.dir/main.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewWindow.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewWidget.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/ProjectionRenderer.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/SimpleRenderer.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/Renderer.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/moc_ViewWidget.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/moc_ViewWindow.cpp.o | /usr/lib/x86_64-linux-gnu/libOpenCL.so /home/pawelburzynski/anaconda3/lib/libQt5Widgets.so.5.9.7 /home/pawelburzynski/anaconda3/lib/libQt5Gui.so.5.9.7 /home/pawelburzynski/anaconda3/lib/libQt5Core.so.5.9.7
+build Simple_Renderer/simple_renderer: CXX_EXECUTABLE_LINKER__simple_renderer Simple_Renderer/CMakeFiles/simple_renderer.dir/main.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewWindow.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewWidget.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/ViewDependentTextureMapping.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/LightFieldInterpolation.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/Renderer.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/moc_ViewWidget.cpp.o Simple_Renderer/CMakeFiles/simple_renderer.dir/moc_ViewWindow.cpp.o | /usr/lib/x86_64-linux-gnu/libOpenCL.so /home/pawelburzynski/anaconda3/lib/libQt5Widgets.so.5.9.7 /home/pawelburzynski/anaconda3/lib/libQt5Gui.so.5.9.7 /home/pawelburzynski/anaconda3/lib/libQt5Core.so.5.9.7
   FLAGS = -g
   LINK_FLAGS = -rdynamic
   LINK_LIBRARIES = -Wl,-rpath,/home/pawelburzynski/anaconda3/lib -lOpenCL /home/pawelburzynski/anaconda3/lib/libQt5Widgets.so.5.9.7 /home/pawelburzynski/anaconda3/lib/libQt5Gui.so.5.9.7 /home/pawelburzynski/anaconda3/lib/libQt5Core.so.5.9.7
