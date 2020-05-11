@@ -23,7 +23,7 @@ QMatrix4x4 Renderer::lookAtRH(QVector3D eye, QVector3D center, QVector3D up)
 
 QMatrix4x4 Renderer::getCurrInvTransMat() {
      // Intrinsic camera matrix of data camera
-	float proj_d = tan(camera_fov / 2.f * M_PI / 180.f);
+	float proj_d = 2.0*tan(camera_fov / 2.f * M_PI / 180.f);
 	QMatrix4x4 K(viewWidth/proj_d, 0.0f, viewWidth / 2.0f, 0.0f,
 		0.0f, -viewWidth/proj_d, viewHeight / 2.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -39,9 +39,9 @@ QMatrix4x4 Renderer::getCurrInvTransMat() {
     QVector3D cameraUp = QVector3D::crossProduct(K_pos, cameraRight);
     cameraUp.normalize();
     QMatrix4x4 V;  // View matrix for the virtual camera K
-	V.lookAt(K_pos, QVector3D(0.0f, 0.0f, 0.0f), cameraUp);
+	V.lookAt(K_pos, QVector3D(0.0f, 0.0f, 0.0f), -cameraUp);
 	QMatrix4x4 proMatrix = K * P * V;  // From World to Virtual camera K coordinates
-    QVector4D row(K_pos.x(),K_pos.y(),K_pos.z(),-(K_pos.x()+K_pos.y()+K_pos.z()));
+    QVector4D row(0.0f,0.0f,K_pos.z(),-(K_pos.z()));
     proMatrix.setRow(3,row);
 	QMatrix4x4 invProMatrix = proMatrix.inverted();
     return invProMatrix;

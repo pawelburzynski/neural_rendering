@@ -28,7 +28,7 @@ public:
     QVector3D K_pos_0; // Initial cmera position
 	int viewWidth, viewHeight; // Resolution of the rendered image in pixels
 
-	float camera_fov = 90.f;
+	float camera_fov = 39.6f;
 
 protected:
     // utils

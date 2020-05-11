@@ -24,7 +24,7 @@ ViewWidget::ViewWidget(Renderer *renderer, QWidget *parent)
 
 QSize ViewWidget::sizeHint() const
 {
-		return QSize(1024,1024);
+		return QSize(1280,720);
 }
 
 void ViewWidget::animate()
@@ -177,10 +177,10 @@ void ViewWidget::wheelEvent(QWheelEvent * event)
 {
 	QPoint numDegrees = event->angleDelta() / 8 / 15;
 
-	double aperture = getAperture() + numDegrees.y();
-	aperture = std::min(100., aperture);
-	aperture = std::max(1., aperture);
-	setAperture(aperture);	
+	double camera_fov = getAperture() + numDegrees.y();
+	camera_fov = std::min(double(max_fov), camera_fov);
+	camera_fov = std::max(double(min_fov), camera_fov);
+	setFov(camera_fov);	
 
 	event->accept();	
 }
