@@ -22,8 +22,6 @@ public:
     virtual void generateEvaluationOutput(const char *data_dir, const char* output_dir) = 0;
     void readData(const char *data_dir);
 
-    float focus = 500.0f;
-    float apertureSize = 8.0f;
     QVector3D K_pos; // Camera position
     QVector3D K_pos_0; // Initial cmera position
 	int viewWidth, viewHeight; // Resolution of the rendered image in pixels

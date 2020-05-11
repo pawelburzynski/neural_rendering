@@ -23,26 +23,6 @@ ViewerWindow::ViewerWindow(Renderer* r) : renderer(r)
 	main_layout->addLayout(controls_layout);
 	controls_layout->addWidget(cameraPosLabel);
 
-	QHBoxLayout *focal_layout = new QHBoxLayout;
-	QLabel *focalLabel = new QLabel(tr("Focal depth"));
-	focalLabel->setAlignment(Qt::AlignRight);
-	focal_layout->addWidget(focalLabel);
-	focalSB = new QDoubleSpinBox(this);
-	focalSB->setMinimum(0);
-	focalSB->setMaximum(15000);
-	focal_layout->addWidget(focalSB);
-	controls_layout->addLayout(focal_layout);
-
-	QHBoxLayout *aperture_layout = new QHBoxLayout;
-	QLabel *apertureLabel = new QLabel(tr("Aperture"));
-	apertureLabel->setAlignment(Qt::AlignRight);
-	aperture_layout->addWidget(apertureLabel);
-	apertureSB = new QDoubleSpinBox(this);
-	apertureSB->setMinimum(1);
-	apertureSB->setMaximum(100);
-	aperture_layout->addWidget(apertureSB);
-	controls_layout->addLayout(aperture_layout);
-
 	QHBoxLayout *fovlayout = new QHBoxLayout;
 	QLabel *fovLabel = new QLabel(tr("Field-of-view"));
 	fovLabel->setAlignment(Qt::AlignRight);
@@ -58,10 +38,8 @@ ViewerWindow::ViewerWindow(Renderer* r) : renderer(r)
 
 	controls_layout->addStretch();
 
-	QLabel *controlsHelpLabel = new QLabel(tr("To move the camera:\n Hold LMB and move (X/Z);\n Hold Shift+LMB for (X/Y); or\n Keys A/D, S/W and Q.R\n\n"
-			"To change focal depth:\n Hold RMB and move; or\n Keys Up/Down\n\n"
-			"To change aperture:\n Scroll wheel; or\n Keys Left/Right\n\n"
-			"To change fov:\n Keys -/="
+	QLabel *controlsHelpLabel = new QLabel(tr("To move the camera:\n Hold LMB and move (X/Z);\n"
+			"To change fov:\n Scroll wheel;\n"
 			));
 	controls_layout->addWidget( controlsHelpLabel );
 	renderTimeLabel = new QLabel(this);
@@ -78,25 +56,14 @@ ViewerWindow::ViewerWindow(Renderer* r) : renderer(r)
     viewWidget->setFocus();
 
 	connect(viewWidget, &ViewWidget::KposChanged, this, &ViewerWindow::KposChanged);
-	connect(viewWidget, &ViewWidget::focalChanged, focalSB, &QDoubleSpinBox::setValue);
-	connect(viewWidget, &ViewWidget::apertureChanged, apertureSB, &QDoubleSpinBox::setValue);
 	connect(viewWidget, &ViewWidget::fovChanged, fovSB, &QDoubleSpinBox::setValue);
 	connect(viewWidget, &ViewWidget::fovChanged, this, &ViewerWindow::fovUpdated);
 
 	connect(viewWidget, &ViewWidget::renderTimeUpdated, this, &ViewerWindow::renderTimeUpdated);
 
-	connect(focalSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), viewWidget, &ViewWidget::setFocal);
-	connect(apertureSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), viewWidget, &ViewWidget::setAperture);
 	connect(fovSB, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), viewWidget, &ViewWidget::setFov);
 
-    //QTimer *timer = new QTimer(this);
-    //connect(timer, &QTimer::timeout, viewWidget, &viewWidget::animate);
-    //timer->start(50);
-
 	// Update labels
-	viewWidget->setKpos(viewWidget->getKpos());
-	viewWidget->setFocal(viewWidget->getFocal());
-	viewWidget->setAperture(viewWidget->getAperture());
 	viewWidget->setFov(viewWidget->getFov());
 }
 

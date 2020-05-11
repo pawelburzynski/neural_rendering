@@ -28,7 +28,7 @@ public slots:
 private:
     Renderer* renderer;
 	QLabel *cameraPosLabel;
-	QDoubleSpinBox *apertureSB, *focalSB, *fovSB;
+	QDoubleSpinBox *fovSB;
     QLabel *renderTimeLabel;
 	QLabel *focalLengthLabel;
 };

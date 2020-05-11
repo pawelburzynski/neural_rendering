@@ -39,6 +39,6 @@ int main(int argc, char *argv[])
     ViewDependentTextureMapping renderer(data_dir);
     ViewerWindow window(&renderer);
     window.show();
-    window.generateEvaluationOutput(data_dir, output_dir);
+    //window.generateEvaluationOutput(data_dir, output_dir);
     return app.exec();
 }
