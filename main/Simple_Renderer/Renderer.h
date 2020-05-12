@@ -15,7 +15,7 @@
 class Renderer
 {
 public:
-    Renderer(const char* kernel_file_name, const char* kernel_program);
+    Renderer();
 
 public:
     virtual void paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize) = 0;
@@ -27,6 +27,7 @@ public:
 	int viewWidth, viewHeight; // Resolution of the rendered image in pixels
 
 	float camera_fov = 39.6f;
+    QString renderer_name;
 
 protected:
     // utils

@@ -61,11 +61,9 @@ double Renderer::dist(QVector4D p1, QVector4D p2) {
 }
 
 
-Renderer::Renderer(const char* kernel_file_name, const char* kernel_program) :
-	viewWidth(0), viewHeight(0), training_dataPoints(0), 
-    kernelFileName(kernel_file_name), kernelProgram(kernel_program)
+Renderer::Renderer():
+	viewWidth(0), viewHeight(0), training_dataPoints(0)
 {
-    initOpenCL();
 }
 
 bool cmp(QString x, QString y) {
@@ -271,6 +269,7 @@ void Renderer::readData(const char *data_dir)
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);
         kernel.setArg(3,curPos);
+        kernel.setArg(4,projectionMats);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;

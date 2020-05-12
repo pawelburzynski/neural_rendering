@@ -27,7 +27,6 @@ QSize ViewWidget::sizeHint() const
 void ViewWidget::animate()
 {
     elapsed = (elapsed + qobject_cast<QTimer*>(sender())->interval()) % 1000;
-    update();
 }
 
 void ViewWidget::setKpos(QVector3D newK_pos)

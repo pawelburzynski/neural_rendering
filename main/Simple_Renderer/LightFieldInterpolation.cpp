@@ -12,8 +12,12 @@
 
 extern const char *getOCLErrorString(cl_int error);
 
-LightFieldInterpolation::LightFieldInterpolation(QString data_dir) : Renderer("light_field_interpolation.cl","light_field_interpolation")
+LightFieldInterpolation::LightFieldInterpolation(QString data_dir):Renderer()
 {
+    kernelFileName = "light_field_interpolation.cl";
+    kernelProgram = "light_field_interpolation";
+    renderer_name = "light field interpolation";
+    initOpenCL();
     readData(data_dir.toLocal8Bit());
     init();
 }
@@ -23,8 +27,10 @@ void LightFieldInterpolation::init()
     try
     {
         closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*number_closest_points);
-        kernel.setArg(4,closestCam);
-        kernel.setArg(5,number_closest_points);
+        invProMatCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16);
+        kernel.setArg(5,invProMatCam);
+        kernel.setArg(6,closestCam);
+        kernel.setArg(7,number_closest_points);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;

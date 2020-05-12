@@ -15,7 +15,7 @@ class ViewerWindow : public QMainWindow
     Q_OBJECT
 
 public:
-   ViewerWindow(Renderer* r);
+    ViewerWindow(Renderer* r);
 
 	void generateEvaluationOutput(QString training_dir, QString output_dir);
 

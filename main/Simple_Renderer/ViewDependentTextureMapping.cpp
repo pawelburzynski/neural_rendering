@@ -12,8 +12,12 @@
 
 extern const char *getOCLErrorString(cl_int error);
 
-ViewDependentTextureMapping::ViewDependentTextureMapping(QString data_dir) : Renderer("view_dependent_texture_mapping.cl","view_dependent_texture_mapping")
+ViewDependentTextureMapping::ViewDependentTextureMapping(QString data_dir) : Renderer()
 {
+    kernelFileName = "view_dependent_texture_mapping.cl";
+    kernelProgram = "view_dependent_texture_mapping";
+    renderer_name = "View dependent texture mapping";
+    initOpenCL();
     readData(data_dir.toLocal8Bit());
     init();
 }
@@ -22,10 +26,8 @@ void ViewDependentTextureMapping::init()
 {
     try
     {
-        qDebug() << "PROJECTION RENDERER" << endl;
         closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*number_closest_points);
         invProMatCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16);
-        kernel.setArg(4,projectionMats);
         kernel.setArg(5,invProMatCam);
         kernel.setArg(6,closestCam);
         kernel.setArg(7,number_closest_points);

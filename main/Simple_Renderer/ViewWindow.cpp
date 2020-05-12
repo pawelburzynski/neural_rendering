@@ -10,7 +10,7 @@
 
 ViewerWindow::ViewerWindow(Renderer* r) : renderer(r)
 {
-    setWindowTitle(tr("Light Field Renderer"));
+    setWindowTitle(tr(r->renderer_name.toLocal8Bit()));
 
 	cameraPosLabel = new QLabel();
     cameraPosLabel->setAlignment(Qt::AlignHCenter);
@@ -38,8 +38,8 @@ ViewerWindow::ViewerWindow(Renderer* r) : renderer(r)
 
 	controls_layout->addStretch();
 
-	QLabel *controlsHelpLabel = new QLabel(tr("To move the camera:\n Hold LMB and move (X/Z);\n"
-			"To change fov:\n Scroll wheel;\n"
+	QLabel *controlsHelpLabel = new QLabel(tr("To move the camera: hold LMB and move (X/Z);\n"
+			"To change fov: scroll wheel;\n"
 			));
 	controls_layout->addWidget( controlsHelpLabel );
 	renderTimeLabel = new QLabel(this);
