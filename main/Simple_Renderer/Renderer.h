@@ -30,7 +30,6 @@ public:
 
 protected:
     // utils
-    QMatrix4x4 lookAtRH(QVector3D eye, QVector3D center, QVector3D up);
     QMatrix4x4 getCurrInvTransMat();
     double angle(QVector4D pos);
     double angle(QVector3D pos);
@@ -41,7 +40,6 @@ protected:
     // OpenCL stuff 
     void initOpenCL();
     void prepareCamPosArr();
-    void calculateAllTransforms();
     cl::Platform platform;
     cl::Device device;
     cl::Context context;
@@ -58,8 +56,7 @@ protected:
     int imgHeight = -1;
     int training_dataPoints = 0;
     int eval_dataPoints = 0;
-    int debug = 0;
- 
+
     // Input data
     void readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::vector<QString>* data_files, std::vector<QMatrix4x4>* pro_mat);
     std::vector<QString> training_data;

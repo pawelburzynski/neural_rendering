@@ -87,11 +87,6 @@ void ViewerWindow::fovUpdated(double fov)
 	focalLengthLabel->setText(label);
 }
 
-void ViewerWindow::loadTrainingData(QString data_dir)
-{
-	renderer->readData(data_dir.toLocal8Bit());
-}
-
 void ViewerWindow::generateEvaluationOutput(QString data_dir, QString output_dir) 
 {
 	renderer->generateEvaluationOutput(data_dir.toLocal8Bit(), output_dir.toLocal8Bit());

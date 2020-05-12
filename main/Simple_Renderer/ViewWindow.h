@@ -17,7 +17,6 @@ class ViewerWindow : public QMainWindow
 public:
    ViewerWindow(Renderer* r);
 
-	void loadTrainingData(QString training_dir);
 	void generateEvaluationOutput(QString training_dir, QString output_dir);
 
 public slots:

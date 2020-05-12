@@ -14,9 +14,9 @@ ViewWidget::ViewWidget(Renderer *renderer, QWidget *parent)
     : QOpenGLWidget(parent), renderer(renderer)
 {
     elapsed = 0;
-		setMinimumSize(256, 256);
+	setMinimumSize(256, 256);
     setAutoFillBackground(false);
-		setFocusPolicy(Qt::StrongFocus);
+	setFocusPolicy(Qt::StrongFocus);
 }
 
 QSize ViewWidget::sizeHint() const
@@ -27,7 +27,7 @@ QSize ViewWidget::sizeHint() const
 void ViewWidget::animate()
 {
     elapsed = (elapsed + qobject_cast<QTimer*>(sender())->interval()) % 1000;
-//    update();
+    update();
 }
 
 void ViewWidget::setKpos(QVector3D newK_pos)
@@ -53,7 +53,7 @@ void ViewWidget::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing);
     renderer->paint(&painter, event, elapsed, size());
     painter.end();
-		emit renderTimeUpdated( time.elapsed() );
+	emit renderTimeUpdated( time.elapsed() );
     //qWarning("Time to paint: %d ms", time.elapsed());
 }
 
@@ -103,7 +103,7 @@ void ViewWidget::mouseMoveEvent(QMouseEvent * event)
 			float ang = -delta.x();
 			float x = mouseDragStartK_pos.x()*cos(ang/180.0 * M_PI) - mouseDragStartK_pos.y()*sin(ang/180.0 * M_PI);
 			float y = mouseDragStartK_pos.x()*sin(ang/180.0 * M_PI) + mouseDragStartK_pos.y()*cos(ang/180.0 * M_PI);
-			newK_pos = mouseDragStartK_pos + QVector3D(delta.x(), 0.f, -delta.y()) / 2.f;newK_pos = mouseDragStartK_pos;
+			newK_pos = mouseDragStartK_pos;
 			newK_pos.setX(x);
 			newK_pos.setY(y);
 		}

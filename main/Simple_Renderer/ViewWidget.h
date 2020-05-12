@@ -17,7 +17,6 @@ public:
 
 public slots:
     void animate();
-	
 	void setKpos(QVector3D newK_pos);  // Set a new position of the virtual camera
 	void setFov(double newFov);  // Set a new aperture for cameras
 

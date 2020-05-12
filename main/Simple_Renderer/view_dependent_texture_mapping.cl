@@ -1,9 +1,7 @@
 const sampler_t samp = CLK_ADDRESS_CLAMP | CLK_NORMALIZED_COORDS_FALSE |
                        CLK_FILTER_LINEAR;
 
-// See the documentations of these functions below
-float4 mat_mul_g(__global float4* A, float4 B);
-float4 mat_mul_c(__constant float4* A, float4 B);
+float4 mat_mul(__constant float4* A, float4 B);
 float dist(float4 p1, float4 p2);
 float gaus(float x);
 float3 display_decode( float3 color_gamma );
@@ -16,10 +14,10 @@ __kernel void view_dependent_texture_mapping(__read_only image3d_t trainingCamIm
                         __write_only image2d_t dstImage,                // Store the result in this image
                         __constant float *CiPos,                        // (cols x rows) 3x1 vectors with camera positions
                         __constant float *CurPos,                       // curent camera position
+                        __constant const float *proMat,                   // 4x4 projection matrices for all training camera inputs
+                        __constant float *invProMatCam,                 // inverse projection camera matrix of current camera  
                         __constant int *closestCam,                     // precomputed list of closest camera positions
-                        int num_datapoints,                             // number of data points
-                        __global const float *proMat,                   // 4x4 projection matrices for all training camera inputs
-                        __constant float *invProMatCam)                 // inverse projection camera matrix of current camera  
+                        int num_datapoints)                             // number of data points
 {
     float width = (float)(get_global_id(0));
     float height = (float)(get_global_id(1));
@@ -27,7 +25,7 @@ __kernel void view_dependent_texture_mapping(__read_only image3d_t trainingCamIm
     float weight = 0;
     float4 cam_pos = (float4)(CurPos[0], CurPos[1], CurPos[2], 1);
     //projection
-    float4 pix_pos = mat_mul_c((__constant float4*)invProMatCam,(float4)(width,height,1.0,0.0));
+    float4 pix_pos = mat_mul((__constant float4*)invProMatCam,(float4)(width,height,1.0,0.0));
     pix_pos/=pix_pos.w;
     float3 plane_normal = (float3)(0.0,0.0,1.0);
     float d = 0;
@@ -47,7 +45,7 @@ __kernel void view_dependent_texture_mapping(__read_only image3d_t trainingCamIm
         float4 p2 = (float4)(CiPos[closestCam[i]*3+0], CiPos[closestCam[i]*3+1], CiPos[closestCam[i]*3+2], 1);
         float d = dist(cam_pos, p2);
         float weighti =  gaus(d);
-        float4 pix_pos_i = mat_mul_g((__global float4*)(proMat+16*closestCam[i]),projection);
+        float4 pix_pos_i = mat_mul((__constant float4*)(proMat+16*closestCam[i]),projection);
         pix_pos_i/=pix_pos_i.z;
         float4 color4  =  read_imagef(trainingCamImages, samp, (float4)(pix_pos_i.x+0.5, pix_pos_i.y+0.5, closestCam[i]+0.5, 0));
         float3 colori = display_decode((float3)(color4.x, color4.y, color4.z));
@@ -66,6 +64,17 @@ __kernel void view_dependent_texture_mapping(__read_only image3d_t trainingCamIm
     int2 dstPos = (int2)(get_global_id(0), get_global_id(1)); // Write pixels at this coordinates
     float3 colorGamma = display_encode( color ); 
     write_imagef(dstImage, dstPos, (float4)(colorGamma.x, colorGamma.y, colorGamma.z, 1.f));
+}
+
+float4 mat_mul(__constant float4* A, float4 b) 
+{
+    float4 C;
+    float *Cf = (float*)&C;
+    for (int n = 0; n < 4; n++) 
+    {
+        Cf[n] = dot(A[n],b);
+    }
+    return C;
 }
 
 float dist(float4 p1, float4 p2) 
@@ -113,28 +122,6 @@ float sphere_projection( float3 sphere_center, float r, float4 p1, float4 p2)
         return s2;
     }
     return s1;
-}
-
-float4 mat_mul_g(__global float4* A, float4 b) 
-{
-    float4 C;
-    float *Cf = (float*)&C;
-    for (int n = 0; n < 4; n++) 
-    {
-        Cf[n] = dot(A[n],b);
-    }
-    return C;
-}
-
-float4 mat_mul_c(__constant float4* A, float4 b) 
-{
-    float4 C;
-    float *Cf = (float*)&C;
-    for (int n = 0; n < 4; n++) 
-    {
-        Cf[n] = dot(A[n],b);
-    }
-    return C;
 }
 
 float3 display_decode( float3 color_gamma )

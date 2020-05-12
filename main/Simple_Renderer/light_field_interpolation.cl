@@ -15,8 +15,7 @@ __kernel void light_field_interpolation(__read_only image3d_t trainingCamImages,
                         __constant int *closestCam,                  // precomputed list of closest camera positions
                        int num_datapoints)                           // number of data points
 
-{
-    
+{   
     float width = (float)(get_global_id(0));
     float height = (float)(get_global_id(1));
     float3 color = (float3)0.f;

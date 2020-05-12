@@ -11,16 +11,6 @@
 #include "Renderer.h"
 #include "ocl_utils.hpp"
 
-QMatrix4x4 Renderer::lookAtRH(QVector3D eye, QVector3D center, QVector3D up)
-{
-	QMatrix4x4 la;
-	la.lookAt(eye, center, up);
-	QMatrix4x4 inv;
-	inv(0, 0) = -1;
-	inv(2, 2) = -1;
-	return inv*la;
-}
-
 QMatrix4x4 Renderer::getCurrInvTransMat() {
      // Intrinsic camera matrix of data camera
 	float proj_d = 2.0*tan(camera_fov / 2.f * M_PI / 180.f);
