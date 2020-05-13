@@ -17,9 +17,8 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.setApplicationDescription("Image-Based Renderer");
     parser.addHelpOption();
-    //parser.addVersionOption();
-    parser.addPositionalArgument("training_dir", QString("Directory with training images."));
-    parser.addPositionalArgument("output_dir", QString("Directory with output images."));
+    parser.addPositionalArgument("training_dir", QString("Directory with training data."));
+    parser.addPositionalArgument("output_dir", QString("Directory for output images."));
     parser.addPositionalArgument("rendering_alg", QString("Rendering algorithm to be chosen from: LightFieldInterpolation,ViewDependentTextureMapping,DeferredNeuralRenderer"));
     parser.process(app);
 
@@ -49,6 +48,6 @@ int main(int argc, char *argv[])
     //renderer to use
     ViewerWindow window(renderer);
     window.show();
-    window.generateEvaluationOutput(data_dir, output_dir);
+    renderer->generateEvaluationOutput(data_dir.toLocal8Bit(), output_dir.toLocal8Bit());
     return app.exec();
 }

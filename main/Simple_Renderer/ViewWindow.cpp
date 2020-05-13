@@ -86,8 +86,3 @@ void ViewerWindow::fovUpdated(double fov)
 	QString label = QString("Focal length: %1 mm").arg(QString::number(focalLength));
 	focalLengthLabel->setText(label);
 }
-
-void ViewerWindow::generateEvaluationOutput(QString data_dir, QString output_dir) 
-{
-	renderer->generateEvaluationOutput(data_dir.toLocal8Bit(), output_dir.toLocal8Bit());
-}

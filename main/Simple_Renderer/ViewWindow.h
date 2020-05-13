@@ -17,8 +17,6 @@ class ViewerWindow : public QMainWindow
 public:
     ViewerWindow(Renderer* r);
 
-	void generateEvaluationOutput(QString training_dir, QString output_dir);
-
 public slots:
 	void KposChanged(QVector3D newKPos);
 	void renderTimeUpdated(int renderTime);

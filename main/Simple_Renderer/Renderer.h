@@ -8,6 +8,8 @@
 #include <QVector3D>
 #include <QMatrix4x4>
 
+#include "RendererUtils.h"
+
 #define __CL_ENABLE_EXCEPTIONS
 #include <CL/cl.hpp>
 
@@ -30,11 +32,6 @@ public:
     QString renderer_name;
 
 protected:
-    // utils
-    QMatrix4x4 getCurrInvTransMat();
-    double angle(QVector4D pos);
-    double angle(QVector3D pos);
-    double dist(QVector4D p1, QVector4D p2);
 
     void updateViewSize(int newWidth, int newHeight);
 
@@ -76,6 +73,5 @@ protected:
     std::vector<float> pro_Mat_TrainVec; // Projection Matrices for all training data
     cl::Buffer projectionMats;   //  Buffer for projection Matrices
 };
-
 
 #endif // Renderer_H

@@ -12,6 +12,8 @@
 
 extern const char *getOCLErrorString(cl_int error);
 
+using namespace renderer;
+
 ViewDependentTextureMapping::ViewDependentTextureMapping(QString data_dir) : Renderer()
 {
     kernelFileName = "view_dependent_texture_mapping.cl";
@@ -71,7 +73,7 @@ void ViewDependentTextureMapping::paint(QPainter *painter, QPaintEvent *event, i
         curPosArr.push_back(1);
 
         inv_Pro_Mat_Cam_Vec.resize(16);
-        QMatrix4x4 inv_pro_Mat =  getCurrInvTransMat().transposed();
+        QMatrix4x4 inv_pro_Mat = getCurrInvTransMat(camera_fov, K_pos, viewWidth, viewHeight).transposed();
         for(int k = 0; k < 16; k++){
             inv_Pro_Mat_Cam_Vec[k] = *(inv_pro_Mat.data()+k);
         }
