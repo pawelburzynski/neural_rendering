@@ -29,8 +29,6 @@ void LightFieldInterpolation::init()
     try
     {
         closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*number_closest_points);
-        invProMatCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16);
-        kernel.setArg(5,invProMatCam);
         kernel.setArg(6,closestCam);
         kernel.setArg(7,number_closest_points);
     }

@@ -72,6 +72,8 @@ protected:
     std::vector<QMatrix4x4> pro_Mat_Eval;  // 4x4 projection matrix for Evaluation Data
     std::vector<float> pro_Mat_TrainVec; // Projection Matrices for all training data
     cl::Buffer projectionMats;   //  Buffer for projection Matrices
+    std::vector<float> inv_Pro_Mat_Cam_Vec; // Inverted Camera Projection matrix
+    cl::Buffer invProMatCam;   //  Buffer for Inverted Camera Projection matrix
 };
 
 #endif // Renderer_H

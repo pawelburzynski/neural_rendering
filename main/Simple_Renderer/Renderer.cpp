@@ -136,6 +136,7 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::ve
             data_files->push_back(files[i]);
         }
     }
+    std::sort(data_files->begin(), data_files->end(),cmp);
 }
 
 // Read data
@@ -147,18 +148,9 @@ void Renderer::readData(const char *data_dir)
 
     training_dataPoints = training_data.size();
     eval_dataPoints = eval_data.size();
-    std::sort(training_data.begin(), training_data.end(),cmp);
-    std::sort(eval_data.begin(), eval_data.end(),cmp);
+
     for(int i=0; i<eval_data.size(); i++) {
         qDebug() << eval_data[i];
-    }
-
-    pro_Mat_TrainVec.resize(16*(training_dataPoints+1));
-    for(int index = 0; index < training_dataPoints; index++) {
-        QMatrix4x4 pro_Mat_Train_trans = pro_Mat_Train[index].transposed();
-        for(int k = 0; k < 16; k++){
-            pro_Mat_TrainVec[16*index+k] = (float)*(pro_Mat_Train_trans.data()+k);
-        }
     }
 
     std::vector<uint8_t> imageData; 
@@ -201,6 +193,15 @@ void Renderer::readData(const char *data_dir)
             << w_cam_training[camera_index].z();
         }
     }
+
+    pro_Mat_TrainVec.resize(16*(training_dataPoints+1));
+    for(int index = 0; index < training_dataPoints; index++) {
+        QMatrix4x4 pro_Mat_Train_trans = pro_Mat_Train[index].transposed();
+        for(int k = 0; k < 16; k++){
+            pro_Mat_TrainVec[16*index+k] = (float)*(pro_Mat_Train_trans.data()+k);
+        }
+    }
+
     qDebug() << "VCamera" << "at (" << K_pos.x() << ", " << K_pos.y() <<")";
     
     try {
@@ -215,12 +216,14 @@ void Renderer::readData(const char *data_dir)
         camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
         curPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*4);
         projectionMats = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*16*(training_dataPoints+1));
+        invProMatCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16);
         queue.enqueueWriteBuffer(projectionMats,CL_TRUE,0,sizeof(float)*16*(training_dataPoints+1),pro_Mat_TrainVec.data());
         prepareCamPosArr();
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);
         kernel.setArg(3,curPos);
         kernel.setArg(4,projectionMats);
+        kernel.setArg(5,invProMatCam);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
