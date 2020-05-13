@@ -21,7 +21,7 @@ public:
 
 public:
     virtual void paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize) = 0;
-    virtual void generateEvaluationOutput(const char *data_dir, const char* output_dir) = 0;
+    virtual void generateEvaluationOutput(const char *dataDir, const char* outputDir) = 0;
     void readData(const char *data_dir);
 
     QVector3D K_pos; // Camera position
@@ -29,7 +29,7 @@ public:
 	int viewWidth, viewHeight; // Resolution of the rendered image in pixels
 
 	float camera_fov = 39.6f;
-    QString renderer_name;
+    QString rendererName;
 
 protected:
 
@@ -52,8 +52,8 @@ protected:
     cl::Image3D renderData;
     int imgWidth = -1;
     int imgHeight = -1;
-    int training_dataPoints = 0;
-    int eval_dataPoints = 0;
+    int trainingDataPoints = 0;
+    int evalDataPoints = 0;
 
     // Input data
     void readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::vector<QString>* data_files, std::vector<QMatrix4x4>* pro_mat);
@@ -61,18 +61,18 @@ protected:
     std::vector<QString> eval_data;
     
     // Training data
-    std::vector<QVector4D> w_cam_training; // World coordindates of each camera
-	std::vector<QVector4D> w_cam_eval;
+    std::vector<QVector4D> wCamTraining; // World coordindates of each camera
+	std::vector<QVector4D> wCamEval;
     std::vector<float> camPosArr;
     cl::Buffer curPos;
     cl::Buffer camPos;      // World coordindates of each camera
 
     //Matrix data
-    std::vector<QMatrix4x4> pro_Mat_Train; // 4x4 projection matrix for Training Data
-    std::vector<QMatrix4x4> pro_Mat_Eval;  // 4x4 projection matrix for Evaluation Data
-    std::vector<float> pro_Mat_TrainVec; // Projection Matrices for all training data
+    std::vector<QMatrix4x4> proMatTrain; // 4x4 projection matrix for Training Data
+    std::vector<QMatrix4x4> proMatEval;  // 4x4 projection matrix for Evaluation Data
+    std::vector<float> proMatTrainVec; // Projection Matrices for all training data
     cl::Buffer projectionMats;   //  Buffer for projection Matrices
-    std::vector<float> inv_Pro_Mat_Cam_Vec; // Inverted Camera Projection matrix
+    std::vector<float> invProMatCamVec; // Inverted Camera Projection matrix
     cl::Buffer invProMatCam;   //  Buffer for Inverted Camera Projection matrix
 };
 

@@ -12,7 +12,7 @@
 #include "ocl_utils.hpp"
 
 Renderer::Renderer():
-	viewWidth(0), viewHeight(0), training_dataPoints(0)
+	viewWidth(0), viewHeight(0), trainingDataPoints(0)
 {
 }
 
@@ -26,9 +26,9 @@ bool cmp(QString x, QString y) {
 
 void Renderer::prepareCamPosArr()
 {
-    camPosArr.resize(3*(training_dataPoints+1));
+    camPosArr.resize(3*(trainingDataPoints+1));
     // View Transformation matrices for cameras
-    for (int i = 0; i < training_dataPoints; i++) {
+    for (int i = 0; i < trainingDataPoints; i++) {
         QFileInfo f(training_data[i]);
         bool flag;
         int camera_index = f.baseName().toInt(&flag)-1;
@@ -36,17 +36,17 @@ void Renderer::prepareCamPosArr()
             qCritical("ERROR: Incorrect image name!");
             std::abort(); 
         }
-        QVector4D &w_cam_i = w_cam_training[camera_index];
+        QVector4D &w_cam_i = wCamTraining[camera_index];
         camPosArr[i*3+0] = (float)w_cam_i.x();
         camPosArr[i*3+1] = (float)w_cam_i.y();
         camPosArr[i*3+2] = (float)w_cam_i.z();
     }
 
-    camPosArr[training_dataPoints*3+0] = (float)camPosArr[0];
-    camPosArr[training_dataPoints*3+1] = (float)camPosArr[1];
-    camPosArr[training_dataPoints*3+2] = (float)camPosArr[2];
+    camPosArr[trainingDataPoints*3+0] = (float)camPosArr[0];
+    camPosArr[trainingDataPoints*3+1] = (float)camPosArr[1];
+    camPosArr[trainingDataPoints*3+2] = (float)camPosArr[2];
 
-    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(training_dataPoints+1),camPosArr.data());
+    queue.enqueueWriteBuffer(camPos,CL_TRUE,0,sizeof(float)*3*(trainingDataPoints+1),camPosArr.data());
 }
 
 // parse metadata file
@@ -143,11 +143,11 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::ve
 void Renderer::readData(const char *data_dir)
 {
     K_pos = QVector3D(0.f,0.f,0.f);
-    readMetaData(QString(data_dir) + "/training",  &w_cam_training, &training_data, &pro_Mat_Train);
-    readMetaData(QString(data_dir) + "/eval",  &w_cam_eval, &eval_data, &pro_Mat_Eval);
+    readMetaData(QString(data_dir) + "/training",  &wCamTraining, &training_data, &proMatTrain);
+    readMetaData(QString(data_dir) + "/eval",  &wCamEval, &eval_data, &proMatEval);
 
-    training_dataPoints = training_data.size();
-    eval_dataPoints = eval_data.size();
+    trainingDataPoints = training_data.size();
+    evalDataPoints = eval_data.size();
 
     for(int i=0; i<eval_data.size(); i++) {
         qDebug() << eval_data[i];
@@ -169,7 +169,7 @@ void Renderer::readData(const char *data_dir)
             if( imgWidth == -1 ) { // First image loaded
                 imgWidth = img.width();
                 imgHeight = img.height();
-                imageData.resize((training_dataPoints+1) * imgHeight * imgWidth * 4);
+                imageData.resize((trainingDataPoints+1) * imgHeight * imgWidth * 4);
             }
             assert( imgWidth == img.width() && imgHeight == img.height() ); // All images must be the same
             for (int y = 0; y < imgHeight; y++) {
@@ -188,17 +188,17 @@ void Renderer::readData(const char *data_dir)
                 }
             } 
             qDebug() << "loaded: " << camera_index+1 << ", position: " 
-            << w_cam_training[camera_index].x() << " " 
-            << w_cam_training[camera_index].y() << " " 
-            << w_cam_training[camera_index].z();
+            << wCamTraining[camera_index].x() << " " 
+            << wCamTraining[camera_index].y() << " " 
+            << wCamTraining[camera_index].z();
         }
     }
 
-    pro_Mat_TrainVec.resize(16*(training_dataPoints+1));
-    for(int index = 0; index < training_dataPoints; index++) {
-        QMatrix4x4 pro_Mat_Train_trans = pro_Mat_Train[index].transposed();
+    proMatTrainVec.resize(16*(trainingDataPoints+1));
+    for(int index = 0; index < trainingDataPoints; index++) {
+        QMatrix4x4 pro_Mat_Train_trans = proMatTrain[index].transposed();
         for(int k = 0; k < 16; k++){
-            pro_Mat_TrainVec[16*index+k] = (float)*(pro_Mat_Train_trans.data()+k);
+            proMatTrainVec[16*index+k] = (float)*(pro_Mat_Train_trans.data()+k);
         }
     }
 
@@ -209,15 +209,15 @@ void Renderer::readData(const char *data_dir)
                       cl::ImageFormat(CL_RGBA, CL_UNORM_INT8), 
                       imgWidth,
                       imgHeight,
-                      training_dataPoints+1,
+                      trainingDataPoints+1,
                       0,
                       0,
                       imageData.data());
-        camPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*3*(training_dataPoints+1));
-        curPos = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*4);
-        projectionMats = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*16*(training_dataPoints+1));
-        invProMatCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*16);
-        queue.enqueueWriteBuffer(projectionMats,CL_TRUE,0,sizeof(float)*16*(training_dataPoints+1),pro_Mat_TrainVec.data());
+        camPos = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*3*(trainingDataPoints+1));
+        curPos = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*4);
+        projectionMats = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*16*(trainingDataPoints+1));
+        invProMatCam = cl::Buffer(context,CL_MEM_READ_ONLY,sizeof(float)*16);
+        queue.enqueueWriteBuffer(projectionMats,CL_TRUE,0,sizeof(float)*16*(trainingDataPoints+1),proMatTrainVec.data());
         prepareCamPosArr();
         kernel.setArg(0,renderData);
         kernel.setArg(2,camPos);

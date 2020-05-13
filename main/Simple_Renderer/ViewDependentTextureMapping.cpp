@@ -18,7 +18,7 @@ ViewDependentTextureMapping::ViewDependentTextureMapping(QString data_dir) : Ren
 {
     kernelFileName = "view_dependent_texture_mapping.cl";
     kernelProgram = "view_dependent_texture_mapping";
-    renderer_name = "View dependent texture mapping";
+    rendererName = "View dependent texture mapping";
     initOpenCL();
     readData(data_dir.toLocal8Bit());
     init();
@@ -40,7 +40,7 @@ void ViewDependentTextureMapping::init()
 
 void ViewDependentTextureMapping::paint(QPainter *painter, QPaintEvent *event, int elapsed, const QSize &destSize)
 {
-    if( training_dataPoints == 0 ) // No data available
+    if( trainingDataPoints == 0 ) // No data available
         return;
 
     unsigned char* data = NULL;
@@ -48,7 +48,7 @@ void ViewDependentTextureMapping::paint(QPainter *painter, QPaintEvent *event, i
         updateViewSize( destSize.width(), destSize.height() );
      
         std::vector<std::pair<double, int>> cams;
-        for (int j = 0; j < training_dataPoints; j++) {
+        for (int j = 0; j < trainingDataPoints; j++) {
             QFileInfo f2(training_data[j]);
             bool flag2;
             int camera_index2 = f2.baseName().toInt(&flag2)-1;
@@ -56,7 +56,7 @@ void ViewDependentTextureMapping::paint(QPainter *painter, QPaintEvent *event, i
                 qCritical("ERROR: Incorrect image name!");
                 std::abort(); 
             }
-            QVector4D &w_cam_j = w_cam_training[camera_index2];
+            QVector4D &w_cam_j = wCamTraining[camera_index2];
             cams.push_back(std::make_pair(dist(w_cam_j,K_pos.toVector4D()),j));
         }
         sort(cams.begin(), cams.end());
@@ -70,15 +70,15 @@ void ViewDependentTextureMapping::paint(QPainter *painter, QPaintEvent *event, i
         curPosArr.push_back(K_pos.z());
         curPosArr.push_back(1);
 
-        inv_Pro_Mat_Cam_Vec.resize(16);
+        invProMatCamVec.resize(16);
         QMatrix4x4 inv_pro_Mat = getCurrInvTransMat(camera_fov, K_pos, viewWidth, viewHeight).transposed();
         for(int k = 0; k < 16; k++){
-            inv_Pro_Mat_Cam_Vec[k] = *(inv_pro_Mat.data()+k);
+            invProMatCamVec[k] = *(inv_pro_Mat.data()+k);
         }
 
         queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
         queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
-        queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, inv_Pro_Mat_Cam_Vec.data());
+        queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, invProMatCamVec.data());
 		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
         // Read Image back and display
         data = new unsigned char[viewWidth*viewHeight*4];
@@ -98,7 +98,7 @@ void ViewDependentTextureMapping::paint(QPainter *painter, QPaintEvent *event, i
 }
 
 void ViewDependentTextureMapping::generateEvaluationOutput(const char *data_dir, const char* output_dir) {
-     for (int index = 0; index < eval_dataPoints; index++) {
+     for (int index = 0; index < evalDataPoints; index++) {
         QFileInfo f(eval_data[index]);
         bool flag;
         int camera_index = f.baseName().toInt(&flag)-1;
@@ -106,8 +106,8 @@ void ViewDependentTextureMapping::generateEvaluationOutput(const char *data_dir,
             qCritical("ERROR: Incorrect image name!");
             std::abort(); 
         }
-        QVector4D &w_cam_i = w_cam_eval[camera_index];
-        if( eval_dataPoints == 0 ) // No data available
+        QVector4D &w_cam_i = wCamEval[camera_index];
+        if( evalDataPoints == 0 ) // No data available
         return;
 
         unsigned char* data = NULL;
@@ -117,7 +117,7 @@ void ViewDependentTextureMapping::generateEvaluationOutput(const char *data_dir,
             qDebug() << "Evaluation output #" << index+1;
             
             std::vector<std::pair<double, int>> cams;
-            for (int j = 0; j < training_dataPoints; j++) {
+            for (int j = 0; j < trainingDataPoints; j++) {
                 QFileInfo f2(training_data[j]);
                 bool flag2;
                 int camera_index2 = f2.baseName().toInt(&flag2)-1;
@@ -125,7 +125,7 @@ void ViewDependentTextureMapping::generateEvaluationOutput(const char *data_dir,
                     qCritical("ERROR: Incorrect image name!");
                     std::abort(); 
                 }
-                QVector4D &w_cam_j = w_cam_training[camera_index2];
+                QVector4D &w_cam_j = wCamTraining[camera_index2];
                 cams.push_back(std::make_pair(dist(w_cam_j,w_cam_i),camera_index2));
             }
             sort(cams.begin(), cams.end());
@@ -140,15 +140,15 @@ void ViewDependentTextureMapping::generateEvaluationOutput(const char *data_dir,
             curPosArr[2] = (w_cam_i.z());
             curPosArr[3] = (w_cam_i.w());
 
-            inv_Pro_Mat_Cam_Vec.resize(16);
-            QMatrix4x4 inv_pro_Mat = pro_Mat_Eval[camera_index].inverted().transposed();
+            invProMatCamVec.resize(16);
+            QMatrix4x4 inv_pro_Mat = proMatEval[camera_index].inverted().transposed();
             for(int k = 0; k < 16; k++){
-                inv_Pro_Mat_Cam_Vec[k] = *(inv_pro_Mat.data()+k);
+                invProMatCamVec[k] = *(inv_pro_Mat.data()+k);
             }
 
             queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
             queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
-            queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, inv_Pro_Mat_Cam_Vec.data());
+            queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, invProMatCamVec.data());
             queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
             // Read Image back and display
             data = new unsigned char[viewWidth*viewHeight*4];

@@ -10,7 +10,7 @@
 
 ViewerWindow::ViewerWindow(Renderer* r) : renderer(r)
 {
-    setWindowTitle(tr(r->renderer_name.toLocal8Bit()));
+    setWindowTitle(tr(r->rendererName.toLocal8Bit()));
 
 	cameraPosLabel = new QLabel();
     cameraPosLabel->setAlignment(Qt::AlignHCenter);
@@ -75,7 +75,9 @@ void ViewerWindow::KposChanged(QVector3D newKpos)
 
 void ViewerWindow::renderTimeUpdated(int renderTime)
 {
-	QString label = QString("Rendering time %1 ms").arg(QString::number(renderTime));
+	float ratef = 1000.0/(float)(renderTime);
+	int ratei = floor(ratef);
+	QString label = QString("Rendering time %1 ms \nInteractive rate %2 fps." ).arg(QString::number(renderTime),QString::number(ratei));
 	renderTimeLabel->setText(label);
 }
 
