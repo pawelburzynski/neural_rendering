@@ -162,7 +162,8 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::ve
                 std::abort();
             }
         }
-        QVector4D row(x,y,z,-(x+y+z));
+        QVector4D row(x,y,z,0);
+        row.normalized();
         proMatrix.setRow(3,row);
         (*pro_mat)[index-1] = proMatrix;
     }

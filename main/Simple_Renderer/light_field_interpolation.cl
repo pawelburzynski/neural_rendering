@@ -3,6 +3,7 @@ const sampler_t samp = CLK_ADDRESS_CLAMP | CLK_NORMALIZED_COORDS_FALSE |
 
 // See the documentations of these functions below
 
+float4 mat_mul(__constant float4* A, float4 B);
 float dist(float4 p1, float4 p2);
 float gaus(float x);
 float3 display_decode( float3 color_gamma );
@@ -20,6 +21,7 @@ __kernel void light_field_interpolation(__read_only image3d_t trainingCamImages,
 {   
     float width = (float)(get_global_id(0));
     float height = (float)(get_global_id(1));
+    float4 focal_pix_pos = mat_mul((__constant float4*)invProMatCam,(float4)(width,height,1.0,0.0));
     float3 color = (float3)0.f;
     float weight = 0;
     float4 p1 = (float4)(CurPos[0], CurPos[1], CurPos[2], 1);
@@ -27,7 +29,9 @@ __kernel void light_field_interpolation(__read_only image3d_t trainingCamImages,
         float4 p2 = (float4)(CiPos[closestCam[i]*3+0], CiPos[closestCam[i]*3+1], CiPos[closestCam[i]*3+2], 1);
         float d = dist(p1, p2);
         float weighti =  gaus(d);
-        float4 color4  =  read_imagef(trainingCamImages, samp, (float4)(width+0.5, height+0.5, closestCam[i]+0.5, 0));
+        float4 pix_pos_i = mat_mul((__constant float4*)(proMat+16*closestCam[i]),focal_pix_pos);
+        pix_pos_i/=pix_pos_i.z;
+        float4 color4  =  read_imagef(trainingCamImages, samp, (float4)(pix_pos_i.x+0.5, pix_pos_i.y+0.5, closestCam[i]+0.5, 0));
         float3 colori = display_decode((float3)(color4.x, color4.y, color4.z));
         if (get_global_id(0) == 100 && get_global_id(1) == 100 && i==0) {
             printf("Closest camera: %d dist: %lf\n", closestCam[i], dist(p1,p2));
@@ -41,12 +45,23 @@ __kernel void light_field_interpolation(__read_only image3d_t trainingCamImages,
     write_imagef(dstImage, dstPos, (float4)(colorGamma.x, colorGamma.y, colorGamma.z, 1.f));
 }
 
+float4 mat_mul(__constant float4* A, float4 b) 
+{
+    float4 C;
+    float *Cf = (float*)&C;
+    for (int n = 0; n < 4; n++) 
+    {
+        Cf[n] = dot(A[n],b);
+    }
+    return C;
+}
+
 float dist(float4 p1, float4 p2) {
    return sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y)+(p1.z-p2.z)*(p1.z-p2.z));
 }
 
 float gaus(float x) {
-    return exp(-x*x*2.0);
+    return 1.0/exp(2*x*x);
 }
 
 /*
