@@ -28,9 +28,9 @@ void LightFieldInterpolation::init()
 {
     try
     {
-        closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*number_closest_points);
+        closestCam = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(int)*numberClosestPoints);
         kernel.setArg(6,closestCam);
-        kernel.setArg(7,number_closest_points);
+        kernel.setArg(7,numberClosestPoints);
     }
     catch(cl::Error err) {
         std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
@@ -60,8 +60,8 @@ void LightFieldInterpolation::paint(QPainter *painter, QPaintEvent *event, int e
             cams.push_back(std::make_pair(dist(w_cam_j,K_pos.toVector4D()),j));
         }
         sort(cams.begin(), cams.end());
-        closestCamArr.resize(number_closest_points);
-        for (int j=0; j<number_closest_points; j++) {
+        closestCamArr.resize(numberClosestPoints);
+        for (int j=0; j<numberClosestPoints; j++) {
             closestCamArr[j] = cams[j].second;
         }
         std::vector<float> curPosArr;
@@ -76,7 +76,7 @@ void LightFieldInterpolation::paint(QPainter *painter, QPaintEvent *event, int e
             invProMatCamVec[k] = *(inv_pro_Mat.data()+k);
         }
 
-        queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
+        queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(numberClosestPoints),closestCamArr.data());
         queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
         queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, invProMatCamVec.data());
 		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
@@ -130,8 +130,8 @@ void LightFieldInterpolation::generateEvaluationOutput(const char *data_dir, con
                 cams.push_back(std::make_pair(dist(w_cam_j,w_cam_i),j));
             }
             sort(cams.begin(), cams.end());
-            closestCamArr.resize(number_closest_points);
-            for (int j=0; j<number_closest_points; j++) {
+            closestCamArr.resize(numberClosestPoints);
+            for (int j=0; j<numberClosestPoints; j++) {
                 closestCamArr[j] = cams[j].second;
             }
             std::vector<float> curPosArr;
@@ -147,7 +147,7 @@ void LightFieldInterpolation::generateEvaluationOutput(const char *data_dir, con
                 invProMatCamVec[k] = *(inv_pro_Mat.data()+k);
             }
 
-            queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(number_closest_points),closestCamArr.data());
+            queue.enqueueWriteBuffer(closestCam,CL_TRUE,0,sizeof(int)*(numberClosestPoints),closestCamArr.data());
             queue.enqueueWriteBuffer(curPos, CL_TRUE, 0, sizeof(float) * 4, curPosArr.data());
             queue.enqueueWriteBuffer(invProMatCam, CL_TRUE, 0, sizeof(float) * 16, invProMatCamVec.data());
             queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(viewWidth, viewHeight, 1), cl::NullRange);
@@ -162,10 +162,22 @@ void LightFieldInterpolation::generateEvaluationOutput(const char *data_dir, con
 
             // write to a file
             QImage img(data, viewWidth, viewHeight, QImage::Format_RGBA8888);
+            QImage diff(img);
+            for (int y = 0; y < imgHeight; y++) {
+                for (int x = 0; x < imgWidth; x++) {                
+                    QColor color = img.pixelColor(x, y);
+                    QColor color2 = img_sample.pixelColor(x,y);
+                    int value = 255-abs(color.black()-color2.black());
+                    QColor colord = QColor(value,value,value);
+                    diff.setPixelColor(QPoint(x,y),colord);
+                }
+            }
             const QString &fileName_out = QString(output_dir) + "/LightFieldInterpolation/" + QString::number(i+1)+"out.png";
             const QString &fileName_sample = QString(output_dir) + "/LightFieldInterpolation/" + QString::number(i+1)+"sample.png";
+            const QString &fileName_diff = QString(output_dir) + "/LightFieldInterpolation/" + QString::number(i+1)+"diff.png";
             img.save(fileName_out, "PNG");
             img_sample.save(fileName_sample, "PNG");
+            diff.save(fileName_diff, "PNG");
         } catch(cl::Error err) {
             std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
         }

@@ -26,7 +26,7 @@ private:
    void init();
 
     //renderer data
-    const int number_closest_points = 10;
+    const int numberClosestPoints = 10;
     std::vector<int> closestCamArr;
     cl::Buffer closestCam;
 

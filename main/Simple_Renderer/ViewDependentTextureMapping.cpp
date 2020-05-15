@@ -161,10 +161,22 @@ void ViewDependentTextureMapping::generateEvaluationOutput(const char *data_dir,
 
             // write to a file
             QImage img(data, viewWidth, viewHeight, QImage::Format_RGBA8888);
+            QImage diff(img);
+            for (int y = 0; y < imgHeight; y++) {
+                for (int x = 0; x < imgWidth; x++) {                
+                    QColor color = img.pixelColor(x, y);
+                    QColor color2 = img_sample.pixelColor(x,y);
+                    int value = 255-abs(color.black()-color2.black());
+                    QColor colord = QColor(value,value,value);
+                    diff.setPixelColor(QPoint(x,y),colord);
+                }
+            }
             const QString &fileName_out = QString(output_dir) + "/ViewDependentTextureMapping/" + QString::number(index+1)+"out.png";
             const QString &fileName_sample = QString(output_dir) + "/ViewDependentTextureMapping/" + QString::number(index+1)+"sample.png";
+            const QString &fileName_diff = QString(output_dir) + "/ViewDependentTextureMapping/" + QString::number(index+1)+"diff.png";
             img.save(fileName_out, "PNG");
             img_sample.save(fileName_sample, "PNG");
+            diff.save(fileName_diff, "PNG");
         } catch(cl::Error err) {
             std::cerr << "ERROR: " << err.what() << "(" << getOCLErrorString(err.err()) << ")" << std::endl;
         }

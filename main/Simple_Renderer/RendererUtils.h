@@ -27,7 +27,7 @@ namespace renderer
         QVector3D cameraUp = QVector3D::crossProduct(K_pos, cameraRight);
         cameraUp.normalize();
         QMatrix4x4 V;  // View matrix for the virtual camera K
-        V.lookAt(K_pos, QVector3D(0.0f, 0.0f, 0.0f), -cameraUp);
+        V.lookAt(K_pos, QVector3D(3.95f, 3.8f, 1.0f), -cameraUp);
         QMatrix4x4 proMatrix = K * P * V;  // From World to Virtual camera K coordinates
         QVector4D row(K_pos.x(),K_pos.y(),K_pos.z(),0);
         row.normalize();

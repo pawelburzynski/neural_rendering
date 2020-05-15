@@ -63,7 +63,7 @@ void Renderer::readMetaData(QString dir,  std::vector<QVector4D>* w_cam, std::ve
         if (f.suffix() == "png") {
             dataPoints ++;
         }
-        if (f.suffix() == "txt") {
+        if (f.suffix() == "txt" && f.baseName() == "data") {
             dataFile =  dir + "/" + files[i];
             foundData = true;
         }
@@ -174,7 +174,7 @@ void Renderer::readData(const char *data_dir)
             assert( imgWidth == img.width() && imgHeight == img.height() ); // All images must be the same
             for (int y = 0; y < imgHeight; y++) {
                 for (int x = 0; x < imgWidth; x++) {                
-                    const QRgb color = img.pixel(x, y); // For compatibility with older Qt, pixel() instead of pixelColor()
+                    const QRgb color = img.pixel(x, y); 
                     imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 0] = qRed(color);
                     imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 1] = qGreen(color);
                     imageData[((i * imgHeight + y) * imgWidth + x) * 4 + 2] = qBlue(color);

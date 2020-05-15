@@ -48,6 +48,6 @@ int main(int argc, char *argv[])
     //renderer to use
     ViewerWindow window(renderer);
     window.show();
-    //renderer->generateEvaluationOutput(data_dir.toLocal8Bit(), output_dir.toLocal8Bit());
+    renderer->generateEvaluationOutput(data_dir.toLocal8Bit(), output_dir.toLocal8Bit());
     return app.exec();
 }

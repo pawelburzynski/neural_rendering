@@ -17,7 +17,7 @@ __kernel void view_dependent_texture_mapping(__read_only image3d_t trainingCamIm
                         __constant const float *proMat,                   // 4x4 projection matrices for all training camera inputs
                         __constant float *invProMatCam,                 // inverse projection camera matrix of current camera  
                         __constant int *closestCam,                     // precomputed list of closest camera positions
-                        int num_datapoints)                             // number of data points
+                        __private int num_datapoints)                             // number of data points
 {
     float width = (float)(get_global_id(0));
     float height = (float)(get_global_id(1));
